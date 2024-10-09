@@ -1,2 +1,2 @@
-# El-Salto-de_Tequendama
+# El-Salto-de-Tequendama
 Repositorio del videojuego en Web3D El Salto de Tequendama
