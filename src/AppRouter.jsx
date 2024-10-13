@@ -6,6 +6,7 @@ import Register from "./scenes/Login/Register";
 import MainMenu from "./scenes/MainMenu/MainMenu";
 
 
+
 function AppRouter() {
 
     return (
@@ -13,7 +14,8 @@ function AppRouter() {
             <Routes>
                 <Route path="/" element={<Login />} />
                 <Route path="/registro" element={<Register />} />    
-                <Route path="/menu" element={<MainMenu />} />    
+                <Route path="/menu" element={<MainMenu />} />
+       
             </Routes>
         </Router>
     );
