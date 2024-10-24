@@ -12,8 +12,8 @@ function AppRouter() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Login />} />
-                <Route path="/registro" element={<Register />} />    
+                <Route path="/" element={<Register />} />
+                <Route path="/login" element={<Login />} />    
                 <Route path="/menu" element={<MainMenu />} />
             </Routes>
         </Router>
