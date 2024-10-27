@@ -8,7 +8,7 @@ import './../../styles/global.css';
 const StyledTextField = styled(TextField)(({ theme }) => ({
     "& .MuiOutlinedInput-root": {
       width: "100%",
-       // Fondo semitransparente
+      background: "rgba(255, 255, 255, 0.1)",  // Fondo semitransparente
       backdropFilter: "blur(5px)",  // Efecto borroso
       color: "white",  // Texto de color blanco
       borderRadius: "8px",
@@ -43,13 +43,17 @@ function Register() {
       registerUser(email, password, username, navigate);  
     };
 
+    const navigateLogin = () => {
+      navigate('/')
+  }
+
     return (
-        <div className="body-register">
+        <div className="body-menus">
             <div className="titles">
-                <h1 className="title-register">El Salto de Tequendama</h1>
-                <h3 className="subtitle-register">Una aventura educativa Muisca</h3>
+                <h1 className="title-menus">El Salto de Tequendama</h1>
+                <h3 className="subtitle-menus">Una aventura educativa Muisca</h3>
             </div>
-            <form onSubmit={handleSubmit} className="register-form" >
+            <form onSubmit={handleSubmit} className="menus-form" >
                 <StyledTextField
                     id="email"
                     label="Correo"
@@ -75,9 +79,12 @@ function Register() {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                 />
+                <div className="menus-links">
+                  <a onClick={navigateLogin}>Ya tengo una cuenta</a>
+                </div>
                 
-                <button type="submit" className="register-button">Registrarse</button>
-                {error && <p className="register-error">{error}</p>}
+                <button type="submit" className="menus-button">Registrarse</button>
+                {error && <p className="menus-error">{error}</p>}
             </form>
         </div>
     );

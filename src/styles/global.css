@@ -12,7 +12,7 @@ body {
     margin: 0;
   }
   
-.body-register {
+.body-menus {
     height: 100vh;
     background-image: url(../assets/images/fondo.png);
     background-repeat: no-repeat;
@@ -25,37 +25,42 @@ body {
     text-align: center;
 }
 
-
-.title-register{
+.title-menus{
   margin-top: 0;
   font-family: 'FuenteMuisca', sans-serif;
   font-size: 6rem;
   margin-bottom: 0.1rem;
-  color: #000000;
+  background: linear-gradient(45deg, #FFD700, #FFB800, #FFD700);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
   user-select: none;
 }
 
-.subtitle-register{
+.subtitle-menus{
   margin-top: 0;
   font-family: 'FuenteSubtitles', sans-serif;
   font-size: 2.2rem;
   margin-bottom: 2rem;
-  color: #000000;
+  background: linear-gradient(45deg, #FFD700, #FFB800, #FFD700);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 1px #FFD700, 0 0 1px #FFD700, 0 0 1px #FFA500, 0 0 1px #FFA500;
   user-select: none;
 }
 
-.register-form {
+.menus-form {
   width: 50%;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-
-.register-button {
+.menus-button {
   padding: 0.75rem;
   width: 100%;
-  background: rgba(0, 0, 0, 0.2);
+  background: linear-gradient(45deg, #FFD700, #FFB800, #FFD700);
   backdrop-filter: blur(2px);
   border: none;
   border-radius: 5px;
@@ -65,9 +70,30 @@ body {
   user-select: none;
 }
 
-.register-button:hover {
-  color: rgba(255, 255, 255, 0.6);
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(0px);
+.menus-button:hover {
+  background: linear-gradient(45deg, #FFD700ae, #FFB800ae, #FFD700ae);
+  backdrop-filter: blur(2px);
 }
 
+.menus-links{
+  display: flex;
+  justify-content: space-between;
+  margin-top: -0.9rem;
+  background: linear-gradient(45deg, #FFD700, #FFB800, #FFD700);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.menus-links a {
+  color: inherit;
+  border-bottom: 0.8px solid #FFD700; /* Puedes ajustar el color y el grosor */
+  padding-bottom: 1px; /* Espacio entre el texto y la línea */
+  text-decoration: none; /* Quita el text-decoration si es necesario */
+}
+
+.menus-links a:hover {
+  border-bottom: none; /* Quitar el subrayado en el hover */
+}
