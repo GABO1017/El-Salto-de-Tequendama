@@ -1,18 +1,21 @@
 import React from 'react';
+import useAuthStore from "../../services/auth";
 import { useNavigate } from 'react-router-dom';
 import './../../styles/Menu.module.css';         
 
 function MainMenu() {
-    const navigate = useNavigate();
+    const { logoutUser, user } = useAuthStore();
+    const navigate = useNavigate();  // Obtén el navigate
 
-    const handleRouterTest = () => {
-        navigate('/'); 
+    const handleLogout = () => {
+      logoutUser(navigate);  // Pasa navigate como argumento al cerrar sesión
     };
 
     return (
         <div>
+            Bienvenido, {user?.username || 'Invitado'}!
             MAIN MENU
-            <button onClick={handleRouterTest}>Volver a login</button>
+            <button onClick={handleLogout}>Cerrar sesión</button>
         </div>
     );
 }

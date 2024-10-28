@@ -15,7 +15,6 @@ function AppRouter() {
                 <Route path="/" element={<Login />} />
                 <Route path="/registro" element={<Register />} />    
                 <Route path="/menu" element={<MainMenu />} />
-       
             </Routes>
         </Router>
     );
