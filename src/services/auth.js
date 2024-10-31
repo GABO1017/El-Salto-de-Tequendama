@@ -207,8 +207,8 @@ const useAuthStore = create((set) => ({
       set({ user: null });
       console.log("Usuario ha cerrado sesión.");
 
-      // Navega a la página de registro tras cerrar sesión
-      navigate("/registro");
+      // Navega a la página de login tras cerrar sesión
+      navigate("/");
     } catch (error) {
       // Si ocurre un error, lo almacenamos en el estado y lo mostramos en consola
       set({ error: error.message });
