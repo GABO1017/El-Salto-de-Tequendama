@@ -18,8 +18,12 @@ function MainMenu() {
   };
 
   const navigateControls = () => {
-    navigate("/controls");
+    navigate("/controles");
   };
+
+  const navigateGame = () => {
+    navigate("/juego");
+};
 
   return (
     <div>
@@ -52,7 +56,7 @@ function MainMenu() {
           <button className="menus-button" onClick={navigateControls}>Controles</button>
           <div className={styles.playButtons}>
             <button className="menus-button" disabled>Continuar</button>
-            <button className="menus-button" >Nueva Aventura</button>
+            <button className="menus-button" onClick={navigateGame}>Nueva Aventura</button>
           </div>
         </div>
       </div>

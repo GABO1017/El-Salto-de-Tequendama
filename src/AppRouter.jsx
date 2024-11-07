@@ -5,6 +5,7 @@ import Login from "./scenes/Login/Login"
 import Register from "./scenes/Login/Register";
 import MainMenu from "./scenes/MainMenu/MainMenu";
 import ViewControls from "./components/UI/ViewControls";
+import GameWorld from "./scenes/GameWorld/GameWorld";
 
 
 
@@ -16,7 +17,8 @@ function AppRouter() {
                 <Route path="/" element={<Login />} />
                 <Route path="/registro" element={<Register />} />    
                 <Route path="/menu" element={<MainMenu />} />
-                <Route path="/controls" element={<ViewControls />} />
+                <Route path="/controles" element={<ViewControls />} />
+                <Route path="/juego" element={<GameWorld />} />
             </Routes>
         </Router>
     );
