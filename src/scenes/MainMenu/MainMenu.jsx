@@ -17,6 +17,10 @@ function MainMenu() {
     logoutUser(navigate); // Pasa navigate como argumento al cerrar sesión
   };
 
+  const navigateControls = () => {
+    navigate("/controls");
+  };
+
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
@@ -45,7 +49,7 @@ function MainMenu() {
         </div>
         <div className="menus-form">
           <button className="menus-button">Configuracion</button>
-          <button className="menus-button">Controles</button>
+          <button className="menus-button" onClick={navigateControls}>Controles</button>
           <div className={styles.playButtons}>
             <button className="menus-button" disabled>Continuar</button>
             <button className="menus-button" >Nueva Aventura</button>
