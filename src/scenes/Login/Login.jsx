@@ -6,6 +6,8 @@ import { InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { styled } from "@mui/material/styles";
 import Loading from "../../components/UI/Loading";
+import AmbientMusic from "../../components/UI/AmbientMusic";
+
 import "./../../styles/global.css";
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
@@ -118,6 +120,7 @@ function Login() {
           Inicia Sesion
         </button>
       </form>
+      <AmbientMusic />
     </div>
   );
 }

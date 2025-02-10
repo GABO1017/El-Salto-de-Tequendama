@@ -11,7 +11,7 @@
     text-align: center;
   }
 
-.logout{
+  .logout{
     color: inherit;
     text-decoration: none;
     /* Quita el text-decoration si es necesario */
@@ -21,6 +21,8 @@
     color: transparent;
     cursor: pointer;
     font-size:larger;
+    display: flex;
+    gap:10px
 }
 
 .playButtons{

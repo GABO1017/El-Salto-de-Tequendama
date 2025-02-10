@@ -7,6 +7,7 @@ import spacebarImage from "./../../assets/images/spacebar.png"; // Imagen de la 
 import ctrlImage from "./../../assets/images/ctrl.png"; // Imagen de la tecla Ctrl
 import leftClickImage from "./../../assets/images/leftClick.png"; // Imagen de click izquierdo del mouse
 import rightClickImage from "./../../assets/images/rightClick.png"; // Imagen de click derecho del mouse
+import AmbientMusic from "./AmbientMusic";
 
 function ViewControls() {
   const navigate = useNavigate(); // Obtén el navigate
@@ -56,6 +57,7 @@ function ViewControls() {
           Regresar al menu principal
         </button>
       </div>
+      <AmbientMusic />
     </div>
   );
 }
