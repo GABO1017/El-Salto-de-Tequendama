@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { KeyboardControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ import Loading from "../../components/UI/Loading";
 import PlayerController from "../../three/PlayerController";
 import Checkpoint from "../../three/Checkpoint";
 import Enemy from "../GameWorld/characters/enemies/Enemy";
+import Tools from "../../components/3D Objects/Tools";
 import { useLocation } from "react-router-dom";
 import {
   saveGameProgress,
@@ -20,17 +21,23 @@ import {
 } from "../../services/saveProgress";
 import useAuthStore from "../../services/auth";
 import { Snackbar, Alert } from "@mui/material";
+import { Perf } from "r3f-perf";
+import useSound from "use-sound";
 
 const GameWorld = () => {
   const location = useLocation();
   const { user } = useAuthStore();
   const [isPaused, setIsPaused] = useState(false);
+  const playerRef = useRef();
   const [playerPosition, setPlayerPosition] = useState([-10, 0.5, 0]); // Posición inicial por defecto
   const [health, setHealth] = useState(50);
   const [isDead, setIsDead] = useState(false);
   const [objective, setObjective] = useState("Habla con el sabio del pueblo"); // Objetivo inicial
   const [isLoading, setIsLoading] = useState(true);
+  const [equippedTool, setEquippedTool] = useState(null); // Estado para la herramienta equipada
   const navigate = useNavigate(); // Obtén el navigate
+  const [playDamage] = useSound("/sounds/damage.mp3", { volume: 0.3 });
+  const [playDeath] = useSound("/sounds/death.mp3", { volume: 0.2 });
 
   // 🔹 Estado para manejar alertas
   const [alert, setAlert] = useState({
@@ -77,6 +84,8 @@ const GameWorld = () => {
             progress.position.z,
           ]);
           setHealth(progress.health);
+          setEquippedTool(progress.equippedTool || null);
+          showAlert("Partida cargada exitosamente", "success");
         }
       });
     } else if (user) {
@@ -85,22 +94,20 @@ const GameWorld = () => {
     setIsLoading(false);
   }, [user, location.state]);
 
-  // 🔹 Función que actualiza la posición del jugador
-  const updatePlayerPosition = (newPosition) => {
-    setPlayerPosition(newPosition);
-  };
-
   const handleSaveGame = () => {
-    if (user) {
+    if (user && playerRef.current) {
+      showAlert("Guardando... No cierres la pestaña", "info");
+      const currentPosition = playerRef.current.getCurrentPosition();
       saveGameProgress(
         user.username,
         {
           position: {
-            x: playerPosition[0],
-            y: playerPosition[1],
-            z: playerPosition[2],
+            x: currentPosition[0],
+            y: currentPosition[1],
+            z: currentPosition[2],
           },
           health: health,
+          equippedTool: equippedTool,
         },
         showAlert
       );
@@ -121,8 +128,12 @@ const GameWorld = () => {
         const newHealth = Math.max(0, prev - 10);
         console.log("⚠️ ¡El jugador ha sido golpeado!", health);
         if (newHealth === 0) {
+          playDeath(); // Reproduce el sonido de muerte
           setIsDead(true); // Marca al jugador como muerto
           setIsPaused(true); // Pausa el juego
+        } else {
+          // Si la salud sigue por encima de 0, reproducir el sonido de daño
+          playDamage();
         }
         return newHealth;
       });
@@ -146,21 +157,42 @@ const GameWorld = () => {
     }
   };
 
+  // Función de alerta personalizada para el checkpoint
+  const checkpointAlert = (message, severity) => {
+    if (severity === "success") {
+      showAlert("Punto de autoguardado alcanzado", "success");
+    } else {
+      showAlert(message, severity);
+    }
+  };
+
   // Función para manejar el checkpoint automático
   const handleCheckpointReached = (checkpointId) => {
-    if (user) {
-      // Guarda la posición actual, la salud y el checkpoint (opcional)
-      saveGameProgress(user.username, {
-        position: {
-          x: playerPosition[0],
-          y: playerPosition[1],
-          z: playerPosition[2],
+    if (user && playerRef.current) {
+      // Muestra alerta de guardado antes de iniciar el proceso
+      showAlert("Guardando... No cierres la pestaña", "info");
+
+      const currentPosition = playerRef.current.getCurrentPosition();
+      saveGameProgress(
+        user.username,
+        {
+          position: {
+            x: currentPosition[0],
+            y: currentPosition[1],
+            z: currentPosition[2],
+          },
+          health: health,
+          checkpoint: checkpointId,
         },
-        health: health,
-        checkpoint: checkpointId,
-      });
+        checkpointAlert // Se utiliza la alerta personalizada
+      );
       console.log("Checkpoint automático guardado:", checkpointId);
     }
+  };
+
+  // Función que se ejecuta cuando el jugador recoge una herramienta
+  const handleToolPickup = () => {
+    setEquippedTool("/textures/weapon.svg");
   };
 
   if (isLoading) {
@@ -176,6 +208,7 @@ const GameWorld = () => {
           health={health}
           onPause={() => setIsPaused(true)}
           objective={objective}
+          equippedTool={equippedTool}
         />
       )}
 
@@ -198,6 +231,7 @@ const GameWorld = () => {
           camera={{ position: [0, 5, 15], fov: 75 }}
           shadows
         >
+          <Perf position="bottom-right" />
           <Sky
             sunPosition={[500, 100, 500]}
             distance={10000}
@@ -209,9 +243,9 @@ const GameWorld = () => {
           <Physics paused={isPaused} debug>
             <Village isPaused={isPaused} position={[10, -10, 0]} scale={5} />
             <PlayerController
+              ref={playerRef}
               isPaused={isPaused}
               initialPosition={playerPosition}
-              onPositionChange={updatePlayerPosition}
             />
             <Enemy
               position={[-20, -5, 0]}
@@ -222,6 +256,7 @@ const GameWorld = () => {
               checkpointId="1"
               onCheckpoint={handleCheckpointReached}
             />
+            <Tools position={[-20, -3, -10]} onPickUp={handleToolPickup} />
           </Physics>
           <ambientLight intensity={0.5} />
           <directionalLight
@@ -247,8 +282,14 @@ const GameWorld = () => {
           variant="filled"
           sx={{
             width: "100%",
-            backgroundColor: alert.severity === "success" || alert.severity === "info" ? "#FFA500" : "",
-            color: alert.severity === "success" || alert.severity === "info" ? "black" : "",
+            backgroundColor:
+              alert.severity === "success" || alert.severity === "info"
+                ? "#FFA500"
+                : "",
+            color:
+              alert.severity === "success" || alert.severity === "info"
+                ? "black"
+                : "",
           }}
         >
           {alert.message}

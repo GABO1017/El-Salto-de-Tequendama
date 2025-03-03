@@ -1,4 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import {
+  useRef,
+  useState,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import { useKeyboardControls } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
@@ -6,6 +12,8 @@ import { useControls } from "leva";
 import { MathUtils, Vector3 } from "three";
 import { degToRad } from "three/src/math/MathUtils.js";
 import Player from "../scenes/GameWorld/characters/Player";
+// Importa useSound (asegúrate de instalarlo: npm install use-sound)
+import useSound from "use-sound";
 
 /** Normaliza un ángulo dentro del rango -π a π */
 const normalizeAngle = (angle) => {
@@ -30,11 +38,7 @@ const lerpAngle = (start, end, t) => {
   return normalizeAngle(start + (end - start) * t);
 };
 
-export const PlayerController = ({
-  isPaused,
-  initialPosition,
-  onPositionChange,
-}) => {
+const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
   // Controles y parámetros configurables
   const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED, JUMP_FORCE } = useControls(
     "Character Control",
@@ -71,6 +75,15 @@ export const PlayerController = ({
 
   // Controles del teclado
   const [, get] = useKeyboardControls();
+
+  // --- Integración de sonido ---
+
+  const [playFootstep] = useSound("/sounds/footstep.mp3", { volume: 0.05 });
+  const [playJump] = useSound("/sounds/jump.mp3", { volume: 0.9 });
+  const [playAttack] = useSound("/sounds/attack.mp3", { volume: 0.4 });
+
+  // Ref para controlar el cooldown entre pisadas (en milisegundos)
+  const lastFootstepTime = useRef(0);
 
   /** Maneja la lógica de movimiento y rotación del personaje */
   const handleMovement = (vel) => {
@@ -127,11 +140,14 @@ export const PlayerController = ({
       console.log("Jump");
       inTheAir.current = true;
 
+      // Reproduce el sonido de salto
+      playJump();
+
       // Obtener la velocidad actual y aplicar la fuerza de salto
       const curVel = rb.current.linvel();
       rb.current.setLinvel({ x: curVel.x, y: JUMP_FORCE, z: curVel.z }, true);
 
-      // Si hay movimiento horizontal, asigna "Jump", de lo contrario "JumpStading"
+      // Si hay movimiento horizontal, asigna "Jumping", de lo contrario "JumpStading"
       if (Math.abs(vel.x) > 0.1 || Math.abs(vel.z) > 0.1) {
         setAnimation("Jumping");
       } else {
@@ -146,6 +162,8 @@ export const PlayerController = ({
     const handleMouseDown = (e) => {
       if (e.button === 0 && !attackLock.current && !isPaused) {
         console.log("Attack iniciado");
+        // Reproduce el sonido de ataque
+        playAttack();
         attackLock.current = true;
         setAnimation("Attack2");
         setTimeout(() => {
@@ -160,7 +178,6 @@ export const PlayerController = ({
     window.addEventListener("mousedown", handleMouseDown);
     return () => window.removeEventListener("mousedown", handleMouseDown);
   }, [isPaused]);
-  // no dependemos de "animation" para no reiniciar el efecto
 
   useFrame(({ camera }) => {
     if (isPaused) return;
@@ -174,6 +191,27 @@ export const PlayerController = ({
       const curVel = rb.current.linvel();
       vel.y = curVel.y;
       rb.current.setLinvel(vel, true);
+
+      // --- Lógica para reproducir sonido de pisada ---
+      const currentTime = performance.now();
+      // Si el jugador está en tierra y la animación es Walking o Running
+      if (
+        !inTheAir.current &&
+        (animation === "Walking" || animation === "Running")
+      ) {
+        // Calcula la velocidad horizontal (puedes ajustar el umbral según convenga)
+        const horizontalSpeed = Math.sqrt(vel.x * vel.x + vel.z * vel.z);
+        // Establece un intervalo entre pisadas: 500 ms para Walking, 300 ms para Running
+        const interval = animation === "Running" ? 200 : 300;
+        if (
+          horizontalSpeed > 0.1 &&
+          currentTime - lastFootstepTime.current > interval
+        ) {
+          console.log("Pisada");
+          playFootstep();
+          lastFootstepTime.current = currentTime;
+        }
+      }
     }
 
     // Lógica de la cámara
@@ -193,6 +231,17 @@ export const PlayerController = ({
     }
   });
 
+  // Permite al componente padre acceder a la posición actual
+  useImperativeHandle(ref, () => ({
+    getCurrentPosition: () => {
+      if (rb.current) {
+        const pos = rb.current.translation();
+        return [pos.x, pos.y, pos.z];
+      }
+      return initialPosition;
+    },
+  }));
+
   useEffect(() => {
     if (rb.current) {
       rb.current.setTranslation(
@@ -205,19 +254,6 @@ export const PlayerController = ({
       );
     }
   }, [initialPosition]);
-
-  // Detecta el cambio de posición del personaje
-  useEffect(() => {
-    const updatePosition = () => {
-      if (rb.current) {
-        const pos = rb.current.translation(); // Obtiene la posición correcta del RigidBody
-        onPositionChange([pos.x, pos.y, pos.z]);
-      }
-    };
-
-    const interval = setInterval(updatePosition, 500); // Actualiza cada 500ms
-    return () => clearInterval(interval);
-  }, [onPositionChange]);
 
   return (
     <RigidBody
@@ -251,16 +287,13 @@ export const PlayerController = ({
 
         {/* Personaje */}
         <group ref={character} position={[0, 0, 0]}>
-
-          {/* Ahora en el centro del RigidBody */}
           <Player scale={0.8} animation={animation} />
         </group>
       </group>
       {/* Collider del personaje */}
       <CapsuleCollider args={[0.6, 0.7]} position={[0, 1, 0]} />
-      {/* Ajustado para centrarse en el RigidBody */}
     </RigidBody>
   );
-};
+});
 
 export default PlayerController;

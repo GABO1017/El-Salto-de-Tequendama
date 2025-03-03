@@ -1,6 +1,8 @@
 import { create } from "zustand";
 import {
   createUserWithEmailAndPassword,
+  browserLocalPersistence, 
+  setPersistence, 
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
@@ -113,6 +115,9 @@ const useAuthStore = create((set) => ({
   // Función para iniciar sesión con el nombre de usuario
   loginUser: async (username, password, navigate) => {
     try {
+      // Establece la persistencia local
+      await setPersistence(auth, browserLocalPersistence);
+
       // Referencia a la colección de usuarios en Firestore
       const usersRef = collection(db, "users");
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="height: 512px; width: 512px;">
+  <path d="M0 0h512v512H0z" fill="url(#pattern)" fill-opacity="1"/>
+  <svg>
+    <defs>
+      <linearGradient id="a" x1="240" y1="16" x2="240" y2="496" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#7d787a"/>
+        <stop offset="1" stop-color="#423e44"/>
+      </linearGradient>
+    </defs>
+    <path fill="url(#a)" fill-rule="evenodd" d="M0 0h512v512H0z"/>
+    <path d="M8 0l30.63 37.93 259.87-9.84 178.4 11.95L504 0H204.7l-10.2 8.779L159.4 0z" overflow="visible" fill="#fff" fill-opacity=".269" fill-rule="evenodd"/>
+    <path d="M2.809 511.6l42.841-40.7L184 468.5l27.4 26.6 10.5-23.8 250.1 7 6.7 18.3 29.3 15.7z" overflow="visible" fill-opacity=".24" fill-rule="evenodd"/>
+    <path d="M511.7 16.15l-39.1 50.39-2 324.26 10.1 19.9-7.3 53.5 20.9 9.1 18 23.8L512 215l-15.5-28.8 15.4-11.4z" overflow="visible" fill-opacity=".19" fill-rule="evenodd"/>
+    <path d="M0 15.18L35.12 61.1l-8.61 93.8 10.19 13.9-5.13 97.4-14.85 18.9 12.62 23.3 7.5 83.9v57.4L-.743 496.5z" overflow="visible" fill="#fff" fill-opacity=".099" fill-rule="evenodd"/>
+    <path d="M51.56 56.62L43.16 141l10.74 22.4-8.99 103.7-10.46 17.5 7.05 21.8 10.61 116.8 21.9 32.6 109.29.5 34.2-12.4 6.5 12.5 235.3 2.3 6.9-33.9-13.7-12.6 6.2-20.4-6-331.94-150-14.62-29.5 1.34-1.4 25.57-60.4-22.77z" overflow="visible" fill="#797677" fill-opacity=".434" fill-rule="evenodd"/>
+  </svg>
+  <g class="" transform="translate(0,0)" style="">
+    <path d="M496.514 14.453l-97.79 45.47-71.57 71.567-26.558-33.377-31.772 91.705-74.644 74.645-26.56-33.375-29.968 86.504 20.053 20.05L413.415 81.93l13.216 13.215L170.92 350.86l20.756 20.755 75.763-75.765 83.155-28.807-30.266-24.084 80.082-80.083 83.158-28.81-31.148-24.786 44.096-94.827zM43.57 266.525l-.002 39.75 23.793-.334 137.732 137.734-.336 23.79h39.754l-.28-39.538h-22.673L83.11 289.48v-22.675l-39.54-.28zm71.434 113.49l-88.166 88.167 17.738 17.74 88.168-88.168-17.74-17.738z" fill-opacity="1" style="fill: rgb(255, 165, 0);"/>
+  </g>
+</svg>

@@ -1,10 +1,9 @@
 import React from "react";
-import heartFull from "/textures/hearts.svg"; // Ícono de corazón lleno
-import heartEmpty from "/textures/shattered-heart.svg"; // Ícono de corazón vacío
-import menuIcon from "/textures/pause-button.svg"; // Ícono del menú
+import heartFull from "/textures/hearts.svg";
+import heartEmpty from "/textures/shattered-heart.svg";
+import menuIcon from "/textures/pause-button.svg";
 
-const GameUI = ({ health, onPause, objective }) => {
-  // Calculamos cuántos corazones mostrar
+const GameUI = ({ health, onPause, objective, equippedTool }) => {
   const maxHearts = 5;
   const hearts = Array.from({ length: maxHearts }, (_, i) =>
     i < health / 10 ? heartFull : heartEmpty
@@ -12,7 +11,6 @@ const GameUI = ({ health, onPause, objective }) => {
 
   return (
     <div className="game-ui">
-      {/* Esquina superior izquierda: Vida y objetivo */}
       <div className="top-left">
         <div className="hearts">
           {hearts.map((heart, index) => (
@@ -22,18 +20,27 @@ const GameUI = ({ health, onPause, objective }) => {
         <p className="objective-text">{objective}</p>
       </div>
 
-      {/* Esquina superior derecha: Menú y pausa */}
       <div className="top-right">
-      <p className="pause-text">Presiona Escape para pausar</p>
+        <p className="pause-text">Presiona Escape para pausar</p>
         <button className="menu-button" onClick={onPause}>
           <img src={menuIcon} alt="Menu" />
         </button>
       </div>
 
-      {/* Centro inferior: Espacio para subtítulos */}
       <div className="bottom-center">
         <p className="subtitles">[Subtítulos aquí]</p>
       </div>
+
+      {/* 🔹 Mostrar herramienta equipada en la esquina inferior izquierda */}
+      {equippedTool && (
+        <div className="bottom-left">
+          <img
+            src={equippedTool}
+            alt="Herramienta equipada"
+            className="tool-icon"
+          />
+        </div>
+      )}
     </div>
   );
 };
