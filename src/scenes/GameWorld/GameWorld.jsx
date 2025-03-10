@@ -9,8 +9,10 @@ import PauseMenu from "../../components/UI/PauseMenu";
 import Dead from "../../components/UI/Dead";
 import GameUI from "../../components/UI/GameUI";
 import Loading from "../../components/UI/Loading";
+import AmbientSound from "../../components/UI/AmbientSound";
 import PlayerController from "../../three/PlayerController";
 import Checkpoint from "../../three/Checkpoint";
+import Rain from "../../three/Rain";
 import Enemy from "../GameWorld/characters/enemies/Enemy";
 import Tools from "../../components/3D Objects/Tools";
 import { useLocation } from "react-router-dom";
@@ -38,6 +40,7 @@ const GameWorld = () => {
   const navigate = useNavigate(); // Obtén el navigate
   const [playDamage] = useSound("/sounds/damage.mp3", { volume: 0.3 });
   const [playDeath] = useSound("/sounds/death.mp3", { volume: 0.2 });
+  const [playPickup] = useSound("/sounds/pickup.mp3", { volume: 0.5 });
 
   // 🔹 Estado para manejar alertas
   const [alert, setAlert] = useState({
@@ -192,6 +195,7 @@ const GameWorld = () => {
 
   // Función que se ejecuta cuando el jugador recoge una herramienta
   const handleToolPickup = () => {
+    playPickup();
     setEquippedTool("/textures/weapon.svg");
   };
 
@@ -202,7 +206,7 @@ const GameWorld = () => {
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       {/* Interfaz de usuario */}
-
+      <AmbientSound isPaused={isPaused} isDead={isDead}/>
       {!isPaused && !isDead && (
         <GameUI
           health={health}
@@ -233,13 +237,14 @@ const GameWorld = () => {
         >
           <Perf position="bottom-right" />
           <Sky
-            sunPosition={[500, 100, 500]}
             distance={10000}
-            turbidity={8}
-            rayleigh={1}
-            inclination={0.6}
+            turbidity={10} // Aumenta la turbidez para dar sensación de nubes
+            rayleigh={1} // Disminuye o ajusta rayleigh para menos claridad en el cielo
+            inclination={0} // Ajusta la inclinación según convenga
             azimuth={0.25}
           />
+          <Rain count={10000} areaSize={200} fallSpeed={10} />
+
           <Physics paused={isPaused} debug>
             <Village isPaused={isPaused} position={[10, -10, 0]} scale={5} />
             <PlayerController

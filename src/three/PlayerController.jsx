@@ -46,7 +46,7 @@ const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
       WALK_SPEED: { value: 3.5, min: 0.1, max: 4, step: 0.1 },
       RUN_SPEED: { value: 7.0, min: 0.2, max: 12, step: 0.1 },
       ROTATION_SPEED: {
-        value: degToRad(8),
+        value: degToRad(7),
         min: degToRad(0.1),
         max: degToRad(10),
         step: degToRad(0.1),
@@ -78,7 +78,7 @@ const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
 
   // --- Integración de sonido ---
 
-  const [playFootstep] = useSound("/sounds/footstep.mp3", { volume: 0.05 });
+  const [playFootstep] = useSound("/sounds/footstep.mp3", { volume: 0.03 });
   const [playJump] = useSound("/sounds/jump.mp3", { volume: 0.9 });
   const [playAttack] = useSound("/sounds/attack.mp3", { volume: 0.4 });
 

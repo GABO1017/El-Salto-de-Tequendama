@@ -26,7 +26,7 @@ const PauseMenu = ({ onResume, onMainMenu, onSave }) => {
               Continuar
             </button>
             <button className="menus-button" onClick={handleConfig}>
-              Configuración
+              Configuración de Graficos
             </button>
             <button className="menus-button" onClick={onSave}>
               Guardar
