@@ -4,7 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
 import { Sky } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
-import Village from "../GameWorld/environment/Village";
+import Village2 from "../GameWorld/environment/Village2";
 import PauseMenu from "../../components/UI/PauseMenu";
 import Dead from "../../components/UI/Dead";
 import GameUI from "../../components/UI/GameUI";
@@ -14,6 +14,7 @@ import PlayerController from "../../three/PlayerController";
 import Checkpoint from "../../three/Checkpoint";
 import Rain from "../../three/Rain";
 import Enemy from "../GameWorld/characters/enemies/Enemy";
+import Jaguar from "../GameWorld/characters/enemies/Jaguar";
 import Tools from "../../components/3D Objects/Tools";
 import { useLocation } from "react-router-dom";
 import {
@@ -30,7 +31,7 @@ const GameWorld = () => {
   const location = useLocation();
   const { user } = useAuthStore();
   const [isPaused, setIsPaused] = useState(false);
-  const playerRef = useRef();
+  const playerRef = useRef(null);
   const [playerPosition, setPlayerPosition] = useState([-10, 0.5, 0]); // Posición inicial por defecto
   const [health, setHealth] = useState(50);
   const [isDead, setIsDead] = useState(false);
@@ -132,11 +133,16 @@ const GameWorld = () => {
         console.log("⚠️ ¡El jugador ha sido golpeado!", health);
         if (newHealth === 0) {
           playDeath(); // Reproduce el sonido de muerte
+          playerRef.current.playDeathAnimation();
           setIsDead(true); // Marca al jugador como muerto
           setIsPaused(true); // Pausa el juego
         } else {
           // Si la salud sigue por encima de 0, reproducir el sonido de daño
           playDamage();
+          if (playerRef.current) {
+            console.log("✅ playerRef está definido, llamando a playHitAnimation()");
+            playerRef.current.playHitAnimation(); // Llama la animación de golpe
+          }
         }
         return newHealth;
       });
@@ -246,7 +252,7 @@ const GameWorld = () => {
           <Rain count={10000} areaSize={200} fallSpeed={10} />
 
           <Physics paused={isPaused} debug>
-            <Village isPaused={isPaused} position={[10, -10, 0]} scale={5} />
+            <Village2 isPaused={isPaused} position={[10, -10, 0]} scale={5}/>
             <PlayerController
               ref={playerRef}
               isPaused={isPaused}

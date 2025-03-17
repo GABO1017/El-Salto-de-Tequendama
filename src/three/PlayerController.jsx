@@ -62,9 +62,11 @@ const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
   const character = useRef();
   const characterRotationTarget = useRef(0);
   const rotationTarget = useRef(0);
-  const [animation, setAnimation] = useState("Idle");
+  const [animation, setAnimation] = useState("Stading");
   // Ref para bloquear la actualización de animación durante el ataque
   const attackLock = useRef(false);
+  const hitLock = useRef(false);
+  const deathLock = useRef(false);
 
   // Referencias de cámara
   const cameraTarget = useRef();
@@ -115,13 +117,24 @@ const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
         speed;
 
       // Solo actualizar la animación si no se está saltando ni atacando
-      if (!inTheAir.current && !attackLock.current) {
-        setAnimation(speed === RUN_SPEED ? "Running" : "Walking");
+
+      if (
+        !inTheAir.current &&
+        !attackLock.current &&
+        !hitLock.current &&
+        !deathLock.current
+      ) {
+        setAnimation(speed === RUN_SPEED ? "Run" : "Walking");
       }
-    } else if (!inTheAir.current && !attackLock.current) {
+    } else if (
+      !inTheAir.current &&
+      !attackLock.current &&
+      !hitLock.current &&
+      !deathLock.current
+    ) {
       vel.x = 0;
       vel.z = 0;
-      setAnimation("Idle");
+      setAnimation("Stading");
     }
 
     // Interpolación suave de la rotación del personaje
@@ -136,6 +149,7 @@ const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
 
   /** Maneja la lógica de salto y selecciona la animación adecuada */
   const handleJump = (vel) => {
+    if (deathLock.current) return vel;
     if (get().jump && !inTheAir.current) {
       console.log("Jump");
       inTheAir.current = true;
@@ -147,11 +161,11 @@ const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
       const curVel = rb.current.linvel();
       rb.current.setLinvel({ x: curVel.x, y: JUMP_FORCE, z: curVel.z }, true);
 
-      // Si hay movimiento horizontal, asigna "Jumping", de lo contrario "JumpStading"
+      // Si hay movimiento horizontal, asigna "Jump", de lo contrario "FastJump"
       if (Math.abs(vel.x) > 0.1 || Math.abs(vel.z) > 0.1) {
-        setAnimation("Jumping");
+        setAnimation("Jump");
       } else {
-        setAnimation("JumpStading");
+        setAnimation("FastJump");
       }
     }
     return vel;
@@ -169,7 +183,7 @@ const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
         setTimeout(() => {
           attackLock.current = false;
           if (!inTheAir.current) {
-            setAnimation("Idle");
+            setAnimation("Stading");
           }
         }, 1000);
       }
@@ -194,15 +208,15 @@ const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
 
       // --- Lógica para reproducir sonido de pisada ---
       const currentTime = performance.now();
-      // Si el jugador está en tierra y la animación es Walking o Running
+      // Si el jugador está en tierra y la animación es Walking o Run
       if (
         !inTheAir.current &&
-        (animation === "Walking" || animation === "Running")
+        (animation === "Walking" || animation === "Run")
       ) {
         // Calcula la velocidad horizontal (puedes ajustar el umbral según convenga)
         const horizontalSpeed = Math.sqrt(vel.x * vel.x + vel.z * vel.z);
-        // Establece un intervalo entre pisadas: 500 ms para Walking, 300 ms para Running
-        const interval = animation === "Running" ? 200 : 300;
+        // Establece un intervalo entre pisadas: 500 ms para Walking, 300 ms para Run
+        const interval = animation === "Run" ? 200 : 300;
         if (
           horizontalSpeed > 0.1 &&
           currentTime - lastFootstepTime.current > interval
@@ -255,6 +269,32 @@ const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
     }
   }, [initialPosition]);
 
+  useImperativeHandle(ref, () => ({
+    playHitAnimation: () => {
+      console.log("🔴 Animación de golpe activada");
+      hitLock.current = true; // Bloquea cambios de animación
+      setAnimation("Hit");
+      setTimeout(() => {
+        hitLock.current = false; // Desbloquea la animación
+        if (!inTheAir.current && !attackLock.current) {
+          setAnimation("Stading"); // Solo vuelve a Stading si no hay otra animación importante
+        }
+      }, 500);
+    },
+    playDeathAnimation: () => {
+      if (deathLock.current) return; // Evita que la animación se active más de una vez
+      console.log("💀 Animación de muerte activada");
+  
+      deathLock.current = true; // Bloquea otras animaciones y movimiento
+      setAnimation("Death");
+  
+      setTimeout(() => {
+        console.log("💀 Personaje muerto, animación pausada");
+        // Aquí podrías agregar lógica extra (mostrar pantalla de game over, etc.)
+      }, 100); // Pequeño delay para asegurarse de que la animación se inicia
+    },
+  }));
+
   return (
     <RigidBody
       colliders={false}
@@ -271,10 +311,10 @@ const PlayerController = forwardRef(({ isPaused, initialPosition }, ref) => {
             const curVel = rb.current.linvel();
             setAnimation(
               Math.abs(curVel.x) > 4 || Math.abs(curVel.z) > 4
-                ? "Running"
+                ? "Run"
                 : Math.abs(curVel.x) > 0.1 || Math.abs(curVel.z) > 0.1
                 ? "Walking"
-                : "Idle"
+                : "Stading"
             );
           }
         }
