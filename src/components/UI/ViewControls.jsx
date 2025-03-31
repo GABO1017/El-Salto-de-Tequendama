@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import wasdImage from "./../../assets/images/wasd.png"; // Imagen que contiene WASD
 import arrowsImage from "./../../assets/images/arrows.png"; // Imagen que contiene las flechas
 import spacebarImage from "./../../assets/images/spacebar.png"; // Imagen de la barra espaciadora
-import ctrlImage from "./../../assets/images/ctrl.png"; // Imagen de la tecla Ctrl
+import shiftImage from "./../../assets/images/shift.png"; // Imagen de la tecla Ctrl
 import leftClickImage from "./../../assets/images/leftClick.png"; // Imagen de click izquierdo del mouse
 import rightClickImage from "./../../assets/images/rightClick.png"; // Imagen de click derecho del mouse
 import AmbientMusic from "./AmbientMusic";
@@ -29,8 +29,8 @@ function ViewControls() {
         </div>
 
         <div className="control-item">
-          <img src={ctrlImage} alt="Ctrl key" className="control-image" />
-          <p>Control Izquierdo: Correr</p>
+          <img src={shiftImage} alt="Ctrl key" className="control-image" />
+          <p>Shift Izquierdo: Correr</p>
         </div>
 
         <div className="control-item">

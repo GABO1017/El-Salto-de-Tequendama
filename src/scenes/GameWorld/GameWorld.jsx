@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
 import { Sky } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
+import Village from "../GameWorld/environment/Village";
 import Village2 from "../GameWorld/environment/Village2";
 import PauseMenu from "../../components/UI/PauseMenu";
 import Dead from "../../components/UI/Dead";
@@ -31,7 +32,7 @@ const GameWorld = () => {
   const location = useLocation();
   const { user } = useAuthStore();
   const [isPaused, setIsPaused] = useState(false);
-  const playerRef = useRef(null);
+  const playerRef = useRef();
   const [playerPosition, setPlayerPosition] = useState([-10, 0.5, 0]); // Posición inicial por defecto
   const [health, setHealth] = useState(50);
   const [isDead, setIsDead] = useState(false);
@@ -39,9 +40,18 @@ const GameWorld = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [equippedTool, setEquippedTool] = useState(null); // Estado para la herramienta equipada
   const navigate = useNavigate(); // Obtén el navigate
-  const [playDamage] = useSound("/sounds/damage.mp3", { volume: 0.3 });
-  const [playDeath] = useSound("/sounds/death.mp3", { volume: 0.2 });
+  const selectedCharacter = localStorage.getItem("selectedCharacter");
   const [playPickup] = useSound("/sounds/pickup.mp3", { volume: 0.5 });
+  const deathSound =
+    selectedCharacter === "Chia"
+      ? "/sounds/death-woman.mp3"
+      : "/sounds/death.mp3";
+  const [playDeath] = useSound(deathSound, { volume: 0.2 });
+  const damageSound =
+    selectedCharacter === "Chia"
+      ? "/sounds/damage-woman.mp3"
+      : "/sounds/damage.mp3";
+  const [playDamage] = useSound(damageSound, { volume: 0.3 });
 
   // 🔹 Estado para manejar alertas
   const [alert, setAlert] = useState({
@@ -89,6 +99,12 @@ const GameWorld = () => {
           ]);
           setHealth(progress.health);
           setEquippedTool(progress.equippedTool || null);
+
+          // Cargar el personaje desde Firestore
+          if (progress.character) {
+            localStorage.setItem("selectedCharacter", progress.character);
+          }
+
           showAlert("Partida cargada exitosamente", "success");
         }
       });
@@ -98,10 +114,12 @@ const GameWorld = () => {
     setIsLoading(false);
   }, [user, location.state]);
 
-  const handleSaveGame = () => {
+  const handleSaveGame = async () => {
     if (user && playerRef.current) {
       showAlert("Guardando... No cierres la pestaña", "info");
-      const currentPosition = playerRef.current.getCurrentPosition();
+
+      const currentPosition = await playerRef.current.getCurrentPosition();
+
       saveGameProgress(
         user.username,
         {
@@ -112,6 +130,7 @@ const GameWorld = () => {
           },
           health: health,
           equippedTool: equippedTool,
+          character: selectedCharacter, // Guardamos el personaje elegido
         },
         showAlert
       );
@@ -140,7 +159,9 @@ const GameWorld = () => {
           // Si la salud sigue por encima de 0, reproducir el sonido de daño
           playDamage();
           if (playerRef.current) {
-            console.log("✅ playerRef está definido, llamando a playHitAnimation()");
+            console.log(
+              "✅ playerRef está definido, llamando a playHitAnimation()"
+            );
             playerRef.current.playHitAnimation(); // Llama la animación de golpe
           }
         }
@@ -212,7 +233,7 @@ const GameWorld = () => {
   return (
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       {/* Interfaz de usuario */}
-      <AmbientSound isPaused={isPaused} isDead={isDead}/>
+      <AmbientSound isPaused={isPaused} isDead={isDead} />
       {!isPaused && !isDead && (
         <GameUI
           health={health}
@@ -252,12 +273,14 @@ const GameWorld = () => {
           <Rain count={10000} areaSize={200} fallSpeed={10} />
 
           <Physics paused={isPaused} debug>
-            <Village2 isPaused={isPaused} position={[10, -10, 0]} scale={5}/>
+            <Village isPaused={isPaused} position={[10, -10, 0]} scale={5} />
             <PlayerController
               ref={playerRef}
               isPaused={isPaused}
               initialPosition={playerPosition}
+              characterSelection={selectedCharacter}
             />
+
             <Enemy
               position={[-20, -5, 0]}
               onPlayerCollide={handlePlayerCollision}

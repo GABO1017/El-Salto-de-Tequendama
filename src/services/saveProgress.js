@@ -9,8 +9,19 @@ import { db } from "../../firebase.config";
  */
 export const saveGameProgress = async (userId, progressData, onAlert) => {
   try {
-    await setDoc(doc(db, "userProgress", userId), progressData, { merge: true });
-    console.log("Progreso guardado:", progressData);
+    const selectedCharacter =
+      localStorage.getItem("selectedCharacter") || "Sue"; // Valor por defecto
+
+    await setDoc(
+      doc(db, "userProgress", userId),
+      { ...progressData, character: selectedCharacter }, // Agregar personaje
+      { merge: true }
+    );
+
+    console.log("Progreso guardado:", {
+      ...progressData,
+      character: selectedCharacter,
+    });
     onAlert("Progreso guardado exitosamente", "success");
   } catch (error) {
     console.error("Error al guardar el progreso:", error);
@@ -27,9 +38,17 @@ export const loadGameProgress = async (userId) => {
   try {
     const docRef = doc(db, "userProgress", userId);
     const docSnap = await getDoc(docRef);
+
     if (docSnap.exists()) {
-      console.log("Progreso cargado:", docSnap.data());
-      return docSnap.data();
+      const progressData = docSnap.data();
+      console.log("Progreso cargado:", progressData);
+
+      // Guardar el personaje en localStorage
+      if (progressData.character) {
+        localStorage.setItem("selectedCharacter", progressData.character);
+      }
+
+      return progressData;
     }
     return null;
   } catch (error) {
@@ -49,7 +68,9 @@ export const resetGameProgress = async (userId, onAlert) => {
       position: { x: -10, y: 0.5, z: 0 },
       health: 100,
     };
+
     await setDoc(doc(db, "userProgress", userId), defaultProgress);
+
     console.log("Progreso reiniciado:", defaultProgress);
     onAlert("Progreso reiniciado correctamente", "info");
   } catch (error) {
@@ -57,9 +78,3 @@ export const resetGameProgress = async (userId, onAlert) => {
     onAlert("Error al reiniciar el progreso", "error");
   }
 };
-
-
-
-
-
-

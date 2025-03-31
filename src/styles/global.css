@@ -93,6 +93,19 @@ body {
   user-select: none;
 }
 
+.text-recuperation{
+  margin-top: 0;
+  font-family: 'FuenteSubtitles', sans-serif;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  background: linear-gradient(45deg, #FFD700, #FFB800, #FFD700);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 1px #FFD700, 0 0 1px #FFD700, 0 0 1px #FFA500, 0 0 1px #FFA500;
+  user-select: none;
+}
+
 .menus-form {
   width: 50%;
   display: flex;
@@ -163,7 +176,7 @@ body {
 }
 
 
-.view-controls-body {
+.view-controls-body, .character-selection-body {
   height: 100vh;
   background-image: url(../assets/images/fondo.png);
   background-repeat: no-repeat;
@@ -176,7 +189,7 @@ body {
   text-align: center;
 }
 
-.view-controls-body::before {
+.view-controls-body::before, .character-selection-body::before {
   content: "";
   position: absolute;
   top: 0;
@@ -187,7 +200,7 @@ body {
   z-index: 1;
 }
 
-.controls-container {
+.controls-container, .character-selection-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -349,7 +362,7 @@ canvas {
   z-index: 10; /* Por encima del canvas */
 }
 
-.config-text{
+.config-text, .character-selection-text {
   display: flex;
   justify-content: center;
   font-size: 3rem;
@@ -373,4 +386,11 @@ canvas {
   width: 100%;
   height: 100%;
   object-fit: contain; 
+}
+
+.character-cards {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
 }

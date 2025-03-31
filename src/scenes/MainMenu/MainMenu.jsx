@@ -48,7 +48,7 @@ function MainMenu() {
   };
 
   const startNewGame = () => {
-    navigate("/juego", { state: { continue: false } });
+    navigate("/seleccion-personaje"); // Ir a la selección de personaje
   };
 
   return (

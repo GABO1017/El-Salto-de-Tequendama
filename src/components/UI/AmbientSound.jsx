@@ -8,7 +8,7 @@ const AmbientSound = ({ isPaused, isDead }) => {
       if (isPaused || isDead) {
         audioRef.current.pause();
       } else {
-        audioRef.current.volume = 0.4;
+        audioRef.current.volume = 0.1;
         audioRef.current.play().catch((err) =>
           console.error("Error al reproducir sonido ambiental:", err)
         );
