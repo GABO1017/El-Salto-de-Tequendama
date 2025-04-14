@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import { Sky } from "@react-three/drei";
 import { Physics } from "@react-three/rapier";
 import Village from "../GameWorld/environment/Village";
-import Village2 from "../GameWorld/environment/Village2";
 import PauseMenu from "../../components/UI/PauseMenu";
 import Dead from "../../components/UI/Dead";
 import GameUI from "../../components/UI/GameUI";
@@ -14,7 +13,12 @@ import AmbientSound from "../../components/UI/AmbientSound";
 import PlayerController from "../../three/PlayerController";
 import Checkpoint from "../../three/Checkpoint";
 import Rain from "../../three/Rain";
+import Water from "../../three/Water";
 import Enemy from "../GameWorld/characters/enemies/Enemy";
+import NormalVillagerM from "../GameWorld/characters/npc/NormalVillagerM";
+import NormalVillagerF from "../GameWorld/characters/npc/NormalVillagerF";
+import WiseVillager1 from "../GameWorld/characters/npc/WiseVillager1";
+import WiseVillager2 from "../GameWorld/characters/npc/WiseVillager2";
 import Jaguar from "../GameWorld/characters/enemies/Jaguar";
 import Tools from "../../components/3D Objects/Tools";
 import { useLocation } from "react-router-dom";
@@ -273,24 +277,31 @@ const GameWorld = () => {
           <Rain count={10000} areaSize={200} fallSpeed={10} />
 
           <Physics paused={isPaused} debug>
-            <Village isPaused={isPaused} position={[10, -10, 0]} scale={5} />
+            <Village isPaused={isPaused} position={[10, -120, 0]} scale={5} />
+            <Water position={[0,-5,20]} targetY={-2.1}/>
             <PlayerController
               ref={playerRef}
               isPaused={isPaused}
               initialPosition={playerPosition}
               characterSelection={selectedCharacter}
+              equippedTool={equippedTool}
             />
 
+            <NormalVillagerF animation="Idle3" position={[-20, 40, 0]} />
+            <NormalVillagerM animation="Idle1" position={[20, 40, 0]} />
+            <WiseVillager1 animation="Idle1" position={[0, 40, 20]} />
+            <WiseVillager2 animation="Idle2" position={[0, 40, -20]} />
             <Enemy
-              position={[-20, -5, 0]}
+              position={[157, 30, -115]}
               onPlayerCollide={handlePlayerCollision}
+              animation="Breathing"
             />
             <Checkpoint
               position={[20, -5, -107]}
               checkpointId="1"
               onCheckpoint={handleCheckpointReached}
             />
-            <Tools position={[-20, -3, -10]} onPickUp={handleToolPickup} />
+            <Tools position={[-20, 40, -10]} onPickUp={handleToolPickup} />
           </Physics>
           <ambientLight intensity={0.5} />
           <directionalLight

@@ -1,280 +1,41 @@
-import React, { useRef } from "react";
-import { useGLTF } from "@react-three/drei";
-import { RigidBody, CuboidCollider } from "@react-three/rapier";
+import React from "react";
+import Land from "../../../components/3D Objects/Land"; 
+import Houses from "../../../components/3D Objects/Houses"; 
+import Tree2 from "../../../components/3D Objects/Tree2";
+import Tree1 from "../../../components/3D Objects/Tree1";
+import Grove from "../../../components/3D Objects/Grove";
+import Grass from "../../../components/3D Objects/Grass";
+import HousePrincipal from "../../../components/3D Objects/HousePrincipal";
+import ToolsWorld from "../../../components/3D Objects/ToolsWorld";
 
 export function Village(props) {
-  const { nodes, materials } = useGLTF("/models/Map_Muisca.glb");
   return (
-    <group {...props} dispose={null}>
-      <RigidBody type="fixed" colliders="trimesh" name="village" debug>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Floor.geometry}
-          material={materials.Grass}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.HomeClay.geometry}
-          material={materials.Clay}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.ClayHouse.geometry}
-          material={materials.Clay}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.ClayHouse001.geometry}
-          material={materials.Clay}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.ClayHouse002.geometry}
-          material={materials.Clay}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.ClayHouse003.geometry}
-          material={materials.Clay}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.ClayHouse004.geometry}
-          material={materials.Clay}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.ClayHouse005.geometry}
-          material={materials.Clay}
-        />
-      </RigidBody>
-      <RigidBody type="fixed" colliders="cuboid" debug>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood2.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood3.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood4.geometry}
-          material={materials.wood2}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1001.geometry}
-          material={materials.wood2}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1002.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1003.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1004.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1005.geometry}
-          material={materials.wood1}
-        />{" "}
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1006.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1007.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1008.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1009.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood1010.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood2001.geometry}
-          material={materials.wood2}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood2002.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood2003.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood2004.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood2005.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood2006.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood3001.geometry}
-          material={materials.wood2}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood3002.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood3003.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood3004.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood3005.geometry}
-          material={materials.wood1}
-        />
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.Wood3006.geometry}
-          material={materials.wood1}
-        />
-      </RigidBody>
-      <RigidBody type="fixed" colliders={false} debug>
-        <mesh
-          castShadow
-          receiveShadow
-          geometry={nodes.tree.geometry}
-          material={materials["Tree Bark"]}
-        />
-        {/* Ajusta los valores; por ejemplo, si quieres un collider total de 0.1 de ancho, usa 0.05 */}
-        <CuboidCollider args={[0.3, 2, 0.2]} position={[-0, 0, -21.86]} />
-      </RigidBody>
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Roof.geometry}
-        material={materials.straw}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Thatched_roof.geometry}
-        material={materials["Thatched roof"]}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Thatched_roof001.geometry}
-        material={materials["Thatched roof"]}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Thatched_roof002.geometry}
-        material={materials["Thatched roof"]}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Thatched_roof003.geometry}
-        material={materials["Thatched roof"]}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Thatched_roof004.geometry}
-        material={materials["Thatched roof"]}
-      />
-      <mesh
-        castShadow
-        receiveShadow
-        geometry={nodes.Thatched_roof005.geometry}
-        material={materials["Thatched roof"]}
-      />
-      <mesh
-        castShadoww
-        receiveShadow
-        geometry={nodes.leaves.geometry}
-        material={materials["Material.001"]}
-      />
+    <group {...props}>
+      <Land />
+      <Houses />
+      <Tree1 />
+      <Tree1 position-x={[10]} />
+      <Tree1 position-x={[15]} />
+      <Tree1 position-x={[20]} />
+      <Tree1 position-z={[10]} />
+      <Tree1 position-z={[-10]} />
+      <Tree2 />
+      <Tree2 position-x={[10]}/>
+      <Tree2 position-x={[15]}/>
+      <Tree2 position-x={[20]}/>
+      <Tree2 position-z={[5]}/>
+      <Tree2 position-z={[-5]}/>
+      <Grove />
+      <Grass />
+      <Grass position-x={[-20]}/>
+      <Grass position-z={[-30]}/>
+      <Grass position-z={[-10]}/>
+      <Grass position={[40,0,-30]}/>
+      <Grass position={[20,0,-10]}/>
+      <HousePrincipal />
+      <ToolsWorld />
     </group>
   );
 }
 
-useGLTF.preload("/Map_Muisca.glb");
 export default Village;

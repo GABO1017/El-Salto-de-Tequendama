@@ -26,7 +26,7 @@ const CharacterSelection = () => {
                 <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
                   <ambientLight intensity={0.5} />
                   <directionalLight position={[1, 2, 3]} />
-                  <PlayerMasc scale={0.8} position={[0, -1.5, 0]}  />
+                  <PlayerMasc animation="Stading" scale={0.8} position={[0, -1.5, 0]}  />
                 </Canvas>
               </div>
               <CardContent>
@@ -44,7 +44,7 @@ const CharacterSelection = () => {
                 <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
                   <ambientLight intensity={0.5} />
                   <directionalLight position={[1, 2, 3]} />
-                  <PlayerFem scale={0.8} position={[0, -1.5, 0]} />
+                  <PlayerFem animation="Idel" scale={0.8} position={[0, -1.5, 0]} />
                 </Canvas>
               </div>
               <CardContent>

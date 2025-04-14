@@ -2,7 +2,7 @@
 import React, { useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 
-const Rain = ({ count = 2000, areaSize = 100, fallSpeed = 10 }) => {
+const Rain = ({ count = 20000, areaSize = 1000, fallSpeed = 10 }) => {
   const rainRef = useRef();
   // Genera posiciones aleatorias para cada gota
   const positions = useMemo(() => {

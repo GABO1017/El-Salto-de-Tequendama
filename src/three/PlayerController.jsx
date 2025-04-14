@@ -40,7 +40,7 @@ const lerpAngle = (start, end, t) => {
 };
 
 const PlayerController = forwardRef(
-  ({ isPaused, initialPosition, characterSelection }, ref) => {
+  ({ isPaused, initialPosition, characterSelection, equippedTool }, ref) => {
     // Controles y parámetros configurables
     const { WALK_SPEED, RUN_SPEED, ROTATION_SPEED, JUMP_FORCE } = useControls(
       "Character Control",
@@ -184,7 +184,12 @@ const PlayerController = forwardRef(
     /** Maneja el ataque mediante click izquierdo */
     useEffect(() => {
       const handleMouseDown = (e) => {
-        if (e.button === 0 && !attackLock.current && !isPaused) {
+        if (
+          e.button === 0 &&
+          !attackLock.current &&
+          !isPaused &&
+          equippedTool
+        ) {
           console.log("Attack iniciado");
           // Reproduce el sonido de ataque
           playAttack();
@@ -201,7 +206,7 @@ const PlayerController = forwardRef(
 
       window.addEventListener("mousedown", handleMouseDown);
       return () => window.removeEventListener("mousedown", handleMouseDown);
-    }, [isPaused]);
+    }, [isPaused, equippedTool]);
 
     useFrame(({ camera }) => {
       if (isPaused) return;
