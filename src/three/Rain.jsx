@@ -39,7 +39,7 @@ const Rain = ({ count = 20000, areaSize = 1000, fallSpeed = 10 }) => {
         />
       </bufferGeometry>
       <pointsMaterial
-        color="lightblue"
+        color="blue"
         size={0.2}  // Puedes ajustar este valor para ver mejor las gotas
         transparent
         opacity={0.6}

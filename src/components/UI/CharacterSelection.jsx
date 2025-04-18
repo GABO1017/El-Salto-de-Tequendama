@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Howler } from "howler";
 import { Card, CardActionArea, CardContent, Typography } from "@mui/material";
 import { Canvas } from "@react-three/fiber";
 import PlayerMasc from "../../scenes/GameWorld/characters/PlayerMasc";
@@ -11,7 +12,17 @@ const CharacterSelection = () => {
 
   const selectCharacter = (character) => {
     localStorage.setItem("selectedCharacter", character); // Guardar elección
-    navigate("/juego"); // Navegar al GameWorld
+    if (Howler.ctx && Howler.ctx.state === "suspended") {
+      Howler.ctx.resume().then(() => {
+        console.log("Audio Context resumido en selección de personaje");
+        localStorage.setItem("audioUnlocked", "true");
+        // Luego navega a /juego
+        navigate("/juego");
+      });
+    } else {
+      localStorage.setItem("audioUnlocked", "true");
+      navigate("/juego");
+    } // Navegar al GameWorld
   };
 
   return (

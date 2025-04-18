@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from "react";
-import { KeyboardControls } from "@react-three/drei";
+import React, { useRef, useState, useEffect, Suspense } from "react";
+import { KeyboardControls, useProgress } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
 import { Sky } from "@react-three/drei";
@@ -14,12 +14,12 @@ import PlayerController from "../../three/PlayerController";
 import Checkpoint from "../../three/Checkpoint";
 import Rain from "../../three/Rain";
 import Water from "../../three/Water";
+import CinematicCamera from "../../three/CinematicCamera";
 import Enemy from "../GameWorld/characters/enemies/Enemy";
 import NormalVillagerM from "../GameWorld/characters/npc/NormalVillagerM";
 import NormalVillagerF from "../GameWorld/characters/npc/NormalVillagerF";
 import WiseVillager1 from "../GameWorld/characters/npc/WiseVillager1";
 import WiseVillager2 from "../GameWorld/characters/npc/WiseVillager2";
-import Jaguar from "../GameWorld/characters/enemies/Jaguar";
 import Tools from "../../components/3D Objects/Tools";
 import { useLocation } from "react-router-dom";
 import {
@@ -36,6 +36,9 @@ const GameWorld = () => {
   const location = useLocation();
   const { user } = useAuthStore();
   const [isPaused, setIsPaused] = useState(false);
+  const progress = useProgress().progress;
+  const isCanvasReady = progress === 100;
+  const [isCinematicStarted, setIsCinematicStarted] = useState(false);
   const playerRef = useRef();
   const [playerPosition, setPlayerPosition] = useState([-10, 0.5, 0]); // Posición inicial por defecto
   const [health, setHealth] = useState(50);
@@ -56,6 +59,45 @@ const GameWorld = () => {
       ? "/sounds/damage-woman.mp3"
       : "/sounds/damage.mp3";
   const [playDamage] = useSound(damageSound, { volume: 0.3 });
+
+  const [cinematicActive, setCinematicActive] = useState(true);
+  // Por ejemplo, cuando termine la cinemática se actualiza el estado:
+  const handleCinematicFinish = () => {
+    setCinematicActive(false);
+  };
+
+  // Bloqueo global de teclas mientras la cinemática esté activa
+  useEffect(() => {
+    const blockKeyEvents = (e) => {
+      // Lista de teclas a bloquear; se pueden ajustar según necesidad
+      const keysToBlock = [
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "w",
+        "a",
+        "s",
+        "d",
+        "Escape",
+        "Space",
+        "Shift",
+      ];
+      if (keysToBlock.includes(e.key)) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+
+    if (cinematicActive) {
+      window.addEventListener("keydown", blockKeyEvents, true);
+    } else {
+      window.removeEventListener("keydown", blockKeyEvents, true);
+    }
+
+    // Cleanup para asegurarse que se elimine al desmontar o cambiar el estado
+    return () => window.removeEventListener("keydown", blockKeyEvents, true);
+  }, [cinematicActive]);
 
   // 🔹 Estado para manejar alertas
   const [alert, setAlert] = useState({
@@ -230,6 +272,19 @@ const GameWorld = () => {
     setEquippedTool("/textures/weapon.svg");
   };
 
+  useEffect(() => {
+    if (cinematicActive) {
+      const timeout = setTimeout(() => {
+        setIsCinematicStarted(true);
+      }, 1000); // este tiempo depende de cuánto se demore en aparecer
+      return () => clearTimeout(timeout);
+    }
+  }, [cinematicActive]);
+
+  if (!isCanvasReady || !isCinematicStarted) {
+    return <Loading />;
+  }
+
   if (isLoading) {
     return <Loading />;
   }
@@ -266,53 +321,58 @@ const GameWorld = () => {
           camera={{ position: [0, 5, 15], fov: 75 }}
           shadows
         >
-          <Perf position="bottom-right" />
-          <Sky
-            distance={10000}
-            turbidity={10} // Aumenta la turbidez para dar sensación de nubes
-            rayleigh={1} // Disminuye o ajusta rayleigh para menos claridad en el cielo
-            inclination={0} // Ajusta la inclinación según convenga
-            azimuth={0.25}
-          />
-          <Rain count={10000} areaSize={200} fallSpeed={10} />
+          <Suspense fallback={null}>
+            <Perf position="bottom-right" />
+            <Sky
+              distance={10000}
+              turbidity={10} // Aumenta la turbidez para dar sensación de nubes
+              rayleigh={1} // Disminuye o ajusta rayleigh para menos claridad en el cielo
+              inclination={0} // Ajusta la inclinación según convenga
+              azimuth={0.25}
+            />
+            {!isPaused && !isDead && (
+              <Rain count={10000} areaSize={200} fallSpeed={10} />
+            )}
 
-          <Physics paused={isPaused} debug>
-            <Village isPaused={isPaused} position={[10, -120, 0]} scale={5} />
-            <Water position={[0,-5,20]} targetY={-2.1}/>
-            <PlayerController
-              ref={playerRef}
-              isPaused={isPaused}
-              initialPosition={playerPosition}
-              characterSelection={selectedCharacter}
-              equippedTool={equippedTool}
-            />
+            <Physics paused={isPaused} debug>
+              <Village isPaused={isPaused} position={[10, -120, 0]} scale={5} />
+              <Water position={[0, -5, 20]} targetY={-2.1} />
+              <PlayerController
+                ref={playerRef}
+                isPaused={isPaused}
+                initialPosition={playerPosition}
+                characterSelection={selectedCharacter}
+                equippedTool={equippedTool}
+              />
 
-            <NormalVillagerF animation="Idle3" position={[-20, 40, 0]} />
-            <NormalVillagerM animation="Idle1" position={[20, 40, 0]} />
-            <WiseVillager1 animation="Idle1" position={[0, 40, 20]} />
-            <WiseVillager2 animation="Idle2" position={[0, 40, -20]} />
-            <Enemy
-              position={[157, 30, -115]}
-              onPlayerCollide={handlePlayerCollision}
-              animation="Breathing"
+              <NormalVillagerF animation="Idle3" position={[-20, 40, 0]} />
+              <NormalVillagerM animation="Idle1" position={[20, 40, 0]} />
+              <WiseVillager1 animation="Idle1" position={[0, 40, 20]} />
+              <WiseVillager2 animation="Idle2" position={[0, 40, -20]} />
+              <Enemy
+                position={[157, 30, -115]}
+                onPlayerCollide={handlePlayerCollision}
+                animation="Breathing"
+              />
+              <Checkpoint
+                position={[20, -5, -107]}
+                checkpointId="1"
+                onCheckpoint={handleCheckpointReached}
+              />
+              <Tools position={[-20, 40, -10]} onPickUp={handleToolPickup} />
+            </Physics>
+            <ambientLight intensity={0.5} />
+            <directionalLight
+              position={[0, 50, 0]}
+              intensity={1}
+              castShadow
+              shadow-mapSize-width={1024}
+              shadow-mapSize-height={1024}
+              shadow-camera-far={500}
             />
-            <Checkpoint
-              position={[20, -5, -107]}
-              checkpointId="1"
-              onCheckpoint={handleCheckpointReached}
-            />
-            <Tools position={[-20, 40, -10]} onPickUp={handleToolPickup} />
-          </Physics>
-          <ambientLight intensity={0.5} />
-          <directionalLight
-            position={[0, 50, 0]}
-            intensity={1}
-            castShadow
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
-            shadow-camera-far={500}
-          />
-          <pointLight position={[0, 100, 0]} intensity={1} castShadow />
+            <pointLight position={[0, 100, 0]} intensity={1} castShadow />
+            {cinematicActive && <CinematicCamera onFinish={handleCinematicFinish} />}
+          </Suspense>
         </Canvas>
       </KeyboardControls>
       {/* Snackbar para mostrar alertas */}

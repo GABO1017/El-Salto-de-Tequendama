@@ -350,7 +350,7 @@ const PlayerController = forwardRef(
         <group ref={container}>
           {/* Cámara */}
           <group ref={cameraTarget} position-z={1.5} />
-          <group ref={cameraPosition} position-y={5} position-z={-8} />
+          <group ref={cameraPosition} position-y={5} position-z={-5} />
 
           {/* Personaje */}
           {/* Cargar personaje según la elección */}
