@@ -40,10 +40,22 @@ const GameWorld = () => {
   const isCanvasReady = progress === 100;
   const [isCinematicStarted, setIsCinematicStarted] = useState(false);
   const playerRef = useRef();
-  const [playerPosition, setPlayerPosition] = useState([-10, 0.5, 0]); // Posición inicial por defecto
+  const [playerPosition, setPlayerPosition] = useState([-43, 0.5, 8]); // Posición inicial por defecto
+  const [playerRotation, setPlayerRotation] = useState([0, -90, 0]); // Rotación inicial por defecto
+  const [wisePositions, setWisePositions] = useState([
+    [-65, 2, 8], // Sabio 1
+    [-65, 2, 6], // Sabio 2
+    [-65, 2, 10], // Sabio 3
+  ]);
+  const [wiseAnimations, setWiseAnimations] = useState([
+    "Idle1", // Sabio 1
+    "Idle2", // Sabio 2
+    "Idle2", // Sabio 3
+  ]);
   const [health, setHealth] = useState(50);
   const [isDead, setIsDead] = useState(false);
-  const [objective, setObjective] = useState("Habla con el sabio del pueblo"); // Objetivo inicial
+  const [objective, setObjective] = useState("Habla con los aldeanos"); // Objetivo inicial
+  const [subtitles, setSubtitles] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [equippedTool, setEquippedTool] = useState(null); // Estado para la herramienta equipada
   const navigate = useNavigate(); // Obtén el navigate
@@ -263,6 +275,7 @@ const GameWorld = () => {
         checkpointAlert // Se utiliza la alerta personalizada
       );
       console.log("Checkpoint automático guardado:", checkpointId);
+      setObjective("Busca a los guardianes del bosque y enfrentate a ellos");
     }
   };
 
@@ -270,7 +283,20 @@ const GameWorld = () => {
   const handleToolPickup = () => {
     playPickup();
     setEquippedTool("/textures/weapon.svg");
+    setObjective("Dirigete al bosque");
   };
+
+  useEffect(() => {
+    const handleContextMenu = (e) => {
+      // Solo evita el menú contextual si el canvas fue clickeado
+      if (e.target.tagName === "CANVAS") {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    window.addEventListener("contextmenu", handleContextMenu);
+    return () => window.removeEventListener("contextmenu", handleContextMenu);
+  }, []);
 
   useEffect(() => {
     if (cinematicActive) {
@@ -299,6 +325,8 @@ const GameWorld = () => {
           onPause={() => setIsPaused(true)}
           objective={objective}
           equippedTool={equippedTool}
+          isCinematic={cinematicActive}
+          subtitles={subtitles}
         />
       )}
 
@@ -320,6 +348,7 @@ const GameWorld = () => {
           style={{ width: "100%", height: "100%" }}
           camera={{ position: [0, 5, 15], fov: 75 }}
           shadows
+          gl={{ localClippingEnabled: true }}
         >
           <Suspense fallback={null}>
             <Perf position="bottom-right" />
@@ -336,30 +365,56 @@ const GameWorld = () => {
 
             <Physics paused={isPaused} debug>
               <Village isPaused={isPaused} position={[10, -120, 0]} scale={5} />
-              <Water position={[0, -5, 20]} targetY={-2.1} />
+              <Water position={[0, -14.5, 20]} targetY={-1.2} />
               <PlayerController
                 ref={playerRef}
                 isPaused={isPaused}
                 initialPosition={playerPosition}
                 characterSelection={selectedCharacter}
                 equippedTool={equippedTool}
+                rotation={playerRotation}
               />
 
-              <NormalVillagerF animation="Idle3" position={[-20, 40, 0]} />
-              <NormalVillagerM animation="Idle1" position={[20, 40, 0]} />
-              <WiseVillager1 animation="Idle1" position={[0, 40, 20]} />
-              <WiseVillager2 animation="Idle2" position={[0, 40, -20]} />
+              <NormalVillagerF
+                animation="Idle3"
+                position={[-20, 40, 0]}
+                playerRef={playerRef}
+                setSubtitles={setSubtitles}
+                setObjective={setObjective}
+              />
+              <NormalVillagerM
+                animation="Idle1"
+                position={[20, 40, 0]}
+                playerRef={playerRef}
+                setSubtitles={setSubtitles}
+                setObjective={setObjective}
+              />
+              <WiseVillager1
+                animation={wiseAnimations[0]}
+                position={wisePositions[0]}
+                rotation={[0, (Math.PI * 89.6) / 180, 0]}
+              />
+              <WiseVillager2
+                animation={wiseAnimations[1]}
+                position={wisePositions[1]}
+                rotation={[0, (Math.PI * 89.3) / 180, 0]}
+              />
+              <WiseVillager2
+                animation={wiseAnimations[2]}
+                position={wisePositions[2]}
+                rotation={[0, (Math.PI * 89.9) / 180, 0]}
+              />
               <Enemy
                 position={[157, 30, -115]}
                 onPlayerCollide={handlePlayerCollision}
                 animation="Breathing"
               />
               <Checkpoint
-                position={[20, -5, -107]}
+                position={[60, 5, -97]}
                 checkpointId="1"
                 onCheckpoint={handleCheckpointReached}
               />
-              <Tools position={[-20, 40, -10]} onPickUp={handleToolPickup} />
+              <Tools position={[-20, 20, -11]} onPickUp={handleToolPickup} />
             </Physics>
             <ambientLight intensity={0.5} />
             <directionalLight
@@ -371,7 +426,15 @@ const GameWorld = () => {
               shadow-camera-far={500}
             />
             <pointLight position={[0, 100, 0]} intensity={1} castShadow />
-            {cinematicActive && <CinematicCamera onFinish={handleCinematicFinish} />}
+            {cinematicActive && (
+              <CinematicCamera
+                onFinish={handleCinematicFinish}
+                setSubtitles={setSubtitles}
+                setWisePositions={setWisePositions}
+                setWiseAnimations={setWiseAnimations}
+                setPlayerRotation={setPlayerRotation}
+              />
+            )}
           </Suspense>
         </Canvas>
       </KeyboardControls>

@@ -6,7 +6,7 @@ import arrowsImage from "./../../assets/images/arrows.png"; // Imagen que contie
 import spacebarImage from "./../../assets/images/spacebar.png"; // Imagen de la barra espaciadora
 import shiftImage from "./../../assets/images/shift.png"; // Imagen de la tecla Ctrl
 import leftClickImage from "./../../assets/images/leftClick.png"; // Imagen de click izquierdo del mouse
-import rightClickImage from "./../../assets/images/rightClick.png"; // Imagen de click derecho del mouse
+import rightClickImage from "./../../assets/images/fImage.png"; // Imagen de click derecho del mouse
 import AmbientMusic from "./AmbientMusic";
 
 function ViewControls() {
@@ -48,7 +48,7 @@ function ViewControls() {
             alt="Right click"
             className="control-image"
           />
-          <p>Click Derecho: Interactuar</p>
+          <p>Tecla F: Interactuar</p>
         </div>
       </div>
 

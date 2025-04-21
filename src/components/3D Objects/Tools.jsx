@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 
-export function Tools({props, position, onPickUp }) {
+export function Tools({ position, onPickUp, ...props }) {
   const { nodes, materials } = useGLTF("/models/Tools.glb");
   const [isCollected, setIsCollected] = useState(false);
   const ref = useRef();
@@ -24,7 +24,7 @@ export function Tools({props, position, onPickUp }) {
       gravityScale={1.5}
       onCollisionEnter={handleCollision} // Detecta la colisión con el jugador
     >
-    <group {...props} position={position} dispose={null} scale={[0.5, 0.5, 0.5]}>
+    <group {...props} position={position} dispose={null} scale={5}>
       <mesh
         castShadow
         receiveShadow

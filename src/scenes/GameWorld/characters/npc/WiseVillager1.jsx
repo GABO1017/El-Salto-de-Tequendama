@@ -2,10 +2,12 @@ import React, { useEffect, useRef } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { RigidBody, CapsuleCollider } from "@react-three/rapier";
 
-export function WiseVillager1({ animation, ...props}) {
+export function WiseVillager1({ animation, ...props }) {
   const group = useRef();
   const { nodes, materials, animations } = useGLTF("/models/Sabio1.glb");
   const { actions } = useAnimations(animations, group);
+  const rigidBodyRef = useRef();
+
   useEffect(() => {
     if (!actions[animation]) return;
 
@@ -15,9 +17,25 @@ export function WiseVillager1({ animation, ...props}) {
 
     return () => action.fadeOut(0.24);
   }, [animation]);
+
+  useEffect(() => {
+    if (rigidBodyRef.current && props.position) {
+      rigidBodyRef.current.setTranslation(
+        { x: props.position[0], y: props.position[1], z: props.position[2] },
+        true // true = despierta el cuerpo si estaba dormido
+      );
+    }
+  }, [props.position]);
+
   return (
-    <group ref={group} {...props} dispose={null}>
-      <RigidBody colliders={false} lockRotations gravityScale={1.5} name="wise">
+    <group ref={group} rotation={props.rotation} dispose={null}>
+      <RigidBody
+        ref={rigidBodyRef}
+        colliders={false}
+        lockRotations
+        gravityScale={1.5}
+        name="wise"
+      >
         <group name="Scene">
           <group
             name="Armature"

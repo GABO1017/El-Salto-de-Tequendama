@@ -1,17 +1,18 @@
 // src/components/Checkpoint.jsx
 import React, { useRef } from "react";
 import { RigidBody } from "@react-three/rapier";
-
+ 
 const Checkpoint = ({ position, checkpointId, onCheckpoint }) => {
   // Para evitar que se dispare varias veces el mismo checkpoint
   const triggered = useRef(false);
-
+ 
   return (
     <RigidBody
       type="fixed"
       colliders="cuboid"
       sensor
       position={position}
+      rotation={[0, -0.25, 0]}
       name="checkpoint"
       onIntersectionEnter ={({ other }) => {
         console.log(
@@ -30,11 +31,12 @@ const Checkpoint = ({ position, checkpointId, onCheckpoint }) => {
     >
       {/* Puedes hacer el mesh invisible o darle algún material semitransparente para debug */}
       <mesh visible>
-        <boxGeometry args={[2, 2, 2]} />
+        <boxGeometry args={[220, 20, 2]} />
         <meshBasicMaterial color="red" transparent opacity={0.5} />
       </mesh>
     </RigidBody>
   );
 };
-
+ 
 export default Checkpoint;
+ 

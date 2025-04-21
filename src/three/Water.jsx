@@ -153,7 +153,7 @@ const WaterShaderMaterial = shaderMaterial(
 
 extend({ WaterShaderMaterial });
 
-const Water = ({ position = [0, -5, 0], targetY = -1.1 }) => {
+const Water = ({ position = [0, -50, 0], targetY = -1.2 }) => {
     const meshRef = useRef();
     const materialRef = useRef();
   

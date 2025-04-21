@@ -1,23 +1,57 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { RigidBody, CapsuleCollider } from "@react-three/rapier";
+import { clone } from "three/examples/jsm/utils/SkeletonUtils";
 
 export function WiseVillager2({ animation, ...props }) {
+  const gltf = useGLTF("/models/Sabio2.glb");
+
+  const cloned = useMemo(() => clone(gltf.scene), [gltf.scene]);
+
+  // Ref para animaciones
   const group = useRef();
-  const { nodes, materials, animations } = useGLTF("/models/Sabio2.glb");
+  const { animations } = gltf;
   const { actions } = useAnimations(animations, group);
+  const rigidBodyRef = useRef();
+
+  // Extraer nodos y materiales desde el clon
+  const nodes = useMemo(() => {
+    const allNodes = {};
+    cloned.traverse((child) => {
+      if (child.isSkinnedMesh || child.isBone || child.isMesh) {
+        allNodes[child.name] = child;
+      }
+    });
+    return allNodes;
+  }, [cloned]);
+
+  const materials = gltf.materials;
+
   useEffect(() => {
     if (!actions[animation]) return;
-
     const action = actions[animation];
-
     action.reset().fadeIn(0.24).play();
-
     return () => action.fadeOut(0.24);
   }, [animation]);
+
+  useEffect(() => {
+    if (rigidBodyRef.current && props.position) {
+      rigidBodyRef.current.setTranslation(
+        { x: props.position[0], y: props.position[1], z: props.position[2] },
+        true // true = despierta el cuerpo si estaba dormido
+      );
+    }
+  }, [props.position]);
+
   return (
-    <group ref={group} {...props} dispose={null}>
-      <RigidBody colliders={false} lockRotations gravityScale={1.5} name="wise">
+    <group ref={group} rotation={props.rotation} dispose={null}>
+      <RigidBody
+        ref={rigidBodyRef}
+        colliders={false}
+        lockRotations
+        gravityScale={1.5}
+        name="wise"
+      >
         <group name="Scene">
           <group
             name="Armature"
@@ -99,4 +133,5 @@ export function WiseVillager2({ animation, ...props }) {
 }
 
 useGLTF.preload("/models/Sabio2.glb");
+
 export default WiseVillager2;
