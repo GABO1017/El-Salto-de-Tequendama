@@ -1,32 +1,32 @@
 import React, { useState } from "react";
-import Config from "./Config"; 
+import ViewControlsPause from "./ViewControlsPause";
 
-const PauseMenu = ({ onResume, onMainMenu, onSave }) => {
-  const [showConfig, setShowConfig] = useState(false);
+const PauseMenu = ({ onResume, onMainMenu, onSave, objective }) => {
+  const [showControls, setShowControls] = useState(false);
 
-  const handleConfig = () => {
-    setShowConfig(true);
+  const handleControls = () => {
+    setShowControls(true);
   };
 
-  const handleConfigClose = () => {
-    setShowConfig(false);
+  const handleControlsClose = () => {
+    setShowControls(false);
   };
 
   return (
     <div className="pause-menu-body">
-      {showConfig ? (
-        <Config onBack={handleConfigClose} />
+      {showControls ? (
+        <ViewControlsPause onBack={handleControlsClose} />
       ) : (
         <>
           <div className="top-left-text">
-            <span>Tu próximo objetivo es llegar a la cima del monte sagrado</span>
+            <span>{objective}</span>
           </div>
           <div className="menus-form">
             <button className="menus-button" onClick={onResume}>
               Continuar
             </button>
-            <button className="menus-button" onClick={handleConfig}>
-              Configuración de Graficos
+            <button className="menus-button" onClick={handleControls}>
+              Controles
             </button>
             <button className="menus-button" onClick={onSave}>
               Guardar

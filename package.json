@@ -26,6 +26,7 @@
     "sweetalert2": "^11.14.4",
     "three": "^0.169.0",
     "use-sound": "^5.0.0",
+    "yuka": "^0.7.8",
     "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {

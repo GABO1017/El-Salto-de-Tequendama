@@ -1,6 +1,6 @@
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../../firebase.config";
-
+ 
 /**
  * Guarda el progreso del jugador en Firestore.
  * @param {string} userId - ID del usuario autenticado.
@@ -9,15 +9,18 @@ import { db } from "../../firebase.config";
  */
 export const saveGameProgress = async (userId, progressData, onAlert) => {
   try {
-    const selectedCharacter =
-      localStorage.getItem("selectedCharacter") || "Sue"; // Valor por defecto
-
+    const selectedCharacter = localStorage.getItem("selectedCharacter") || "Sue"; // Valor por defecto
+ 
     await setDoc(
       doc(db, "userProgress", userId),
-      { ...progressData, character: selectedCharacter }, // Agregar personaje
+      {
+        ...progressData,
+        character: selectedCharacter,
+        isNewGame: false, // Indica que no es una nueva partida
+      },
       { merge: true }
     );
-
+ 
     console.log("Progreso guardado:", {
       ...progressData,
       character: selectedCharacter,
@@ -28,7 +31,8 @@ export const saveGameProgress = async (userId, progressData, onAlert) => {
     onAlert("Error al guardar el progreso", "error");
   }
 };
-
+ 
+ 
 /**
  * Carga el progreso guardado del jugador desde Firestore.
  * @param {string} userId - ID del usuario.
@@ -38,16 +42,16 @@ export const loadGameProgress = async (userId) => {
   try {
     const docRef = doc(db, "userProgress", userId);
     const docSnap = await getDoc(docRef);
-
+ 
     if (docSnap.exists()) {
       const progressData = docSnap.data();
       console.log("Progreso cargado:", progressData);
-
+ 
       // Guardar el personaje en localStorage
       if (progressData.character) {
         localStorage.setItem("selectedCharacter", progressData.character);
       }
-
+ 
       return progressData;
     }
     return null;
@@ -56,7 +60,7 @@ export const loadGameProgress = async (userId) => {
     return null;
   }
 };
-
+ 
 /**
  * Reinicia el progreso del jugador a valores predeterminados.
  * @param {string} userId - ID del usuario.
@@ -67,10 +71,11 @@ export const resetGameProgress = async (userId, onAlert) => {
     const defaultProgress = {
       position: { x: -10, y: 0.5, z: 0 },
       health: 100,
+      isNewGame: true, // Indica que es una nueva partida
     };
-
+ 
     await setDoc(doc(db, "userProgress", userId), defaultProgress);
-
+ 
     console.log("Progreso reiniciado:", defaultProgress);
     onAlert("Progreso reiniciado correctamente", "info");
   } catch (error) {
@@ -78,3 +83,6 @@ export const resetGameProgress = async (userId, onAlert) => {
     onAlert("Error al reiniciar el progreso", "error");
   }
 };
+ 
+ 
+ 

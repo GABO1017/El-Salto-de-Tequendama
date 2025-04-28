@@ -1,12 +1,12 @@
 import React, { useRef, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
-
+ 
 export function Tools({ position, onPickUp, ...props }) {
   const { nodes, materials } = useGLTF("/models/Tools.glb");
   const [isCollected, setIsCollected] = useState(false);
   const ref = useRef();
-
+ 
   // Función que se ejecuta cuando el jugador toca la herramienta
   const handleCollision = (event) => {
     if (event.rigidBodyObject?.name === "player") {
@@ -14,9 +14,9 @@ export function Tools({ position, onPickUp, ...props }) {
       onPickUp(); // Notificar a GameWorld que se recogió
     }
   };
-
+ 
   if (isCollected) return null;
-
+ 
   return (
     <RigidBody
       ref={ref}
@@ -24,7 +24,7 @@ export function Tools({ position, onPickUp, ...props }) {
       gravityScale={1.5}
       onCollisionEnter={handleCollision} // Detecta la colisión con el jugador
     >
-    <group {...props} position={position} dispose={null} scale={5}>
+    <group {...props} position={position} dispose={null} scale={0.5} rotateY={0}>
       <mesh
         castShadow
         receiveShadow
@@ -41,6 +41,7 @@ export function Tools({ position, onPickUp, ...props }) {
     </RigidBody>
   );
 }
-
+ 
 useGLTF.preload("/models/Tools.glb");
 export default Tools;
+ 

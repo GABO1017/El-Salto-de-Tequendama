@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, Suspense } from "react";
-import { KeyboardControls, useProgress } from "@react-three/drei";
+import { KeyboardControls, useProgress, useGLTF  } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
 import { Sky } from "@react-three/drei";
@@ -32,15 +32,73 @@ import { Snackbar, Alert } from "@mui/material";
 import { Perf } from "r3f-perf";
 import useSound from "use-sound";
 
+// Precarga de modelos críticos
+const modelPaths = [
+  "/models/villagerM.glb",
+  "/models/villagerF.glb",
+  "/models/playerMasc.glb",
+  "/models/playerFem.glb",
+  // Agrega más modelos según sea necesario
+];
+
+// Precargar modelos fuera del ciclo de renderizado
+modelPaths.forEach(path => {
+  useGLTF.preload(path);
+});
+
 const GameWorld = () => {
   const location = useLocation();
   const { user } = useAuthStore();
   const [isPaused, setIsPaused] = useState(false);
-  const progress = useProgress().progress;
+  const { progress } = useProgress();
+  const [forcedLoading, setForcedLoading] = useState(false);
+  // Comprueba si viene de selección de personaje
+// Verificar si viene de selección de personaje
+const isFromSelection = location.state?.fromSelection || 
+localStorage.getItem("isLoadingGame") === "true";
   const isCanvasReady = progress === 100;
   const [isCinematicStarted, setIsCinematicStarted] = useState(false);
   const playerRef = useRef();
-  const [playerPosition, setPlayerPosition] = useState([-43, 0.5, 8]); // Posición inicial por defecto
+  const enemyRefs = useRef([]);
+  const enemyPositions = [
+    [180, -3, -115],
+    [135, -3, -110],
+    [127, -4, -145],
+  ];
+
+  const villagerMRefs = useRef([]);
+  const villagerMPositions = [
+    [20, 10, 0],
+    [-10, 10, 40],
+    [0, 10, 0],
+    [-50, 10, 30],
+    [75, 10, -10],
+    [30, 10, 50],
+    [25, 10, -50],
+    [45, 10, 8],
+    [-30, 10, -18],
+    [-15, 10, -85],
+    [-5, 10, -75],
+    [-10, 10, -90],
+  ];
+
+  const villagerFRefs = useRef([]);
+  const villagerFPositions = [
+    [-20, 10, 0],
+    [-10, 10, 20],
+    [-35, 10, 20],
+    [-55, 10, -15],
+    [-18, 10, 32],
+    [-30, 10, 5],
+    [-42, 10, -17],
+    [-12, 10, 38],
+    [-25, 10, -60],
+    [5, 10, -40],
+    [-5, 10, -5],
+    [-5, 10, -54],
+  ];
+
+  const [playerPosition, setPlayerPosition] = useState([-43, 0.6, 8]); // Posición inicial por defecto
   const [playerRotation, setPlayerRotation] = useState([0, -90, 0]); // Rotación inicial por defecto
   const [wisePositions, setWisePositions] = useState([
     [-65, 2, 8], // Sabio 1
@@ -54,9 +112,11 @@ const GameWorld = () => {
   ]);
   const [health, setHealth] = useState(50);
   const [isDead, setIsDead] = useState(false);
-  const [objective, setObjective] = useState("Habla con los aldeanos"); // Objetivo inicial
+  const [objective, setObjective] = useState(
+    "Habla con los aldeanos para conseguir una pista"
+  ); // Objetivo inicial
   const [subtitles, setSubtitles] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Estado de carga
   const [equippedTool, setEquippedTool] = useState(null); // Estado para la herramienta equipada
   const navigate = useNavigate(); // Obtén el navigate
   const selectedCharacter = localStorage.getItem("selectedCharacter");
@@ -157,10 +217,18 @@ const GameWorld = () => {
           ]);
           setHealth(progress.health);
           setEquippedTool(progress.equippedTool || null);
+          setPlayerRotation([0, 0, 0]);
 
           // Cargar el personaje desde Firestore
           if (progress.character) {
             localStorage.setItem("selectedCharacter", progress.character);
+          }
+
+          // Controlar la reproducción de la cinemática
+          if (progress.isNewGame) {
+            setCinematicActive(true);
+          } else {
+            setCinematicActive(false);
           }
 
           showAlert("Partida cargada exitosamente", "success");
@@ -169,7 +237,7 @@ const GameWorld = () => {
     } else if (user) {
       resetGameProgress(user.username, showAlert);
     }
-    setIsLoading(false);
+    setIsLoading(false); // Cambia el estado de carga a falso después de cargar la partida
   }, [user, location.state]);
 
   const handleSaveGame = async () => {
@@ -207,7 +275,6 @@ const GameWorld = () => {
     if (other.rigidBodyObject?.name === "player") {
       setHealth((prev) => {
         const newHealth = Math.max(0, prev - 10);
-        console.log("⚠️ ¡El jugador ha sido golpeado!", health);
         if (newHealth === 0) {
           playDeath(); // Reproduce el sonido de muerte
           playerRef.current.playDeathAnimation();
@@ -217,9 +284,6 @@ const GameWorld = () => {
           // Si la salud sigue por encima de 0, reproducir el sonido de daño
           playDamage();
           if (playerRef.current) {
-            console.log(
-              "✅ playerRef está definido, llamando a playHitAnimation()"
-            );
             playerRef.current.playHitAnimation(); // Llama la animación de golpe
           }
         }
@@ -274,7 +338,7 @@ const GameWorld = () => {
         },
         checkpointAlert // Se utiliza la alerta personalizada
       );
-      console.log("Checkpoint automático guardado:", checkpointId);
+
       setObjective("Busca a los guardianes del bosque y enfrentate a ellos");
     }
   };
@@ -307,11 +371,23 @@ const GameWorld = () => {
     }
   }, [cinematicActive]);
 
-  if (!isCanvasReady || !isCinematicStarted) {
-    return <Loading />;
-  }
+  // Efecto para manejar la precarga
+  // Efecto para simular tiempo de carga cuando viene de selección
+  useEffect(() => {
+    if (isFromSelection) {
+      setForcedLoading(true);
+      const timer = setTimeout(() => {
+        setForcedLoading(false);
+        localStorage.removeItem("isLoadingGame");
+      }, 3000); // Asegura tiempo para la carga de modelos
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isFromSelection]);
 
-  if (isLoading) {
+  const isLoading2 = progress !== 100 || forcedLoading || isLoading;
+
+  if (isLoading2) {
     return <Loading />;
   }
 
@@ -336,6 +412,7 @@ const GameWorld = () => {
           onResume={handleResume}
           onMainMenu={handleMainMenu}
           onSave={handleSaveGame}
+          objective={objective}
         />
       )}
       {isDead && (
@@ -363,7 +440,7 @@ const GameWorld = () => {
               <Rain count={10000} areaSize={200} fallSpeed={10} />
             )}
 
-            <Physics paused={isPaused} debug>
+            <Physics paused={isPaused}>
               <Village isPaused={isPaused} position={[10, -120, 0]} scale={5} />
               <Water position={[0, -14.5, 20]} targetY={-1.2} />
               <PlayerController
@@ -373,22 +450,39 @@ const GameWorld = () => {
                 characterSelection={selectedCharacter}
                 equippedTool={equippedTool}
                 rotation={playerRotation}
+                enemyRefs={enemyRefs}
               />
 
-              <NormalVillagerF
-                animation="Idle3"
-                position={[-20, 40, 0]}
-                playerRef={playerRef}
-                setSubtitles={setSubtitles}
-                setObjective={setObjective}
-              />
-              <NormalVillagerM
-                animation="Idle1"
-                position={[20, 40, 0]}
-                playerRef={playerRef}
-                setSubtitles={setSubtitles}
-                setObjective={setObjective}
-              />
+              {villagerFPositions.map((pos, index) => (
+                <NormalVillagerF
+                  key={index}
+                  ref={(el) => {
+                    if (el) villagerFRefs.current[index] = el;
+                  }}
+                  position={pos}
+                  animation="Idle3"
+                  playerRef={playerRef}
+                  isPaused={isPaused} 
+                  setSubtitles={setSubtitles}
+                  setObjective={setObjective}
+                />
+              ))}
+
+              {villagerMPositions.map((pos, index) => (
+                <NormalVillagerM
+                  key={index}
+                  ref={(el) => {
+                    if (el) villagerMRefs.current[index] = el;
+                  }}
+                  position={pos}
+                  animation="Idle1"
+                  playerRef={playerRef}
+                  isPaused={isPaused} 
+                  setSubtitles={setSubtitles}
+                  setObjective={setObjective}
+                />
+              ))}
+
               <WiseVillager1
                 animation={wiseAnimations[0]}
                 position={wisePositions[0]}
@@ -404,19 +498,31 @@ const GameWorld = () => {
                 position={wisePositions[2]}
                 rotation={[0, (Math.PI * 89.9) / 180, 0]}
               />
-              <Enemy
-                position={[157, 30, -115]}
-                onPlayerCollide={handlePlayerCollision}
-                animation="Breathing"
-              />
+              {enemyPositions.map((pos, index) => (
+                <Enemy
+                  key={index}
+                  ref={(el) => {
+                    if (el) enemyRefs.current[index] = el;
+                  }}
+                  position={pos}
+                  animation="Idle"
+                  playerRef={playerRef}
+                  isPaused={isPaused} // Pasar el estado de pausa
+                  isDead={isDead} // Pasar el estado de muerte
+                  onPlayerCollide={(other) =>
+                    handlePlayerCollision(other, index)
+                  }
+                />
+              ))}
+
               <Checkpoint
                 position={[60, 5, -97]}
                 checkpointId="1"
                 onCheckpoint={handleCheckpointReached}
               />
-              <Tools position={[-20, 20, -11]} onPickUp={handleToolPickup} />
+              <Tools position={[-15, 20, -93]} onPickUp={handleToolPickup} />
             </Physics>
-            <ambientLight intensity={0.5} />
+            <ambientLight intensity={1.5} />
             <directionalLight
               position={[0, 50, 0]}
               intensity={1}

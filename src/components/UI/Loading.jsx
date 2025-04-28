@@ -78,7 +78,7 @@ const Loading = () => {
           alt="Loading icon"
           className="loading-icon"
         />
-        <p className="loading-text">Loading...</p>
+        <p className="loading-text">Cargando...</p>
       </div>
     </div>
   );

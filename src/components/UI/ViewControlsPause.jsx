@@ -9,13 +9,9 @@ import leftClickImage from "./../../assets/images/leftClick.png"; // Imagen de c
 import fImage from "./../../assets/images/fImage.png"; // Imagen de la tecla F
 import AmbientMusic from "./AmbientMusic";
 
-function ViewControls() {
-  const navigate = useNavigate(); // Obtén el navigate
-  const navigateMainMenu = () => {
-    navigate("/menu");
-  };
+const Config = ({ onBack, className }) => {
   return (
-    <div className="view-controls-body">
+    <div className={`config-menu-body ${className}`}>
       <div className="controls-container">
         <div className="control-item">
           <img src={wasdImage} alt="WASD keys" className="control-image" />
@@ -43,23 +39,17 @@ function ViewControls() {
         </div>
 
         <div className="control-item">
-          <img
-            src={fImage}
-            alt="F key"
-            className="control-image"
-          />
+          <img src={fImage} alt="F key" className="control-image" />
           <p>Tecla F: Interactuar</p>
         </div>
       </div>
-
       <div className="menus-form">
-        <button className="menus-button" onClick={navigateMainMenu}>
-          Regresar al menu principal
+        <button className="menus-button" onClick={onBack}>
+          Regresar 
         </button>
       </div>
-      <AmbientMusic />
     </div>
   );
-}
+};
 
-export default ViewControls;
+export default Config;

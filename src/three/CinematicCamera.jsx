@@ -2,12 +2,12 @@ import React, { useRef, useEffect, useState } from "react";
 import { useThree, useFrame } from "@react-three/fiber";
 import { Vector3 } from "three";
 import { Html } from "@react-three/drei";
- 
+
 const rawSteps = [
   // Escenas de la cinemática
   {
     label: "Toma aérea de la aldea",
-    duration: 14, //14
+    duration: 15, //15
     from: { position: new Vector3(30, 70, 50), target: new Vector3(0, 0, 0) },
     to: { position: new Vector3(20, 40, 50), target: new Vector3(0, 0, 0) },
     audio: "/sounds/Escena 1.mp3",
@@ -162,7 +162,7 @@ const rawSteps = [
       "Con su destino marcado y el peso de la responsabilidad en sus hombros, el joven aldeano abandona la seguridad de la aldea, dando inicio a la travesía que determinará el futuro de su pueblo.",
   },
 ];
- 
+
 const CinematicCamera = ({
   onFinish,
   setSubtitles,
@@ -175,7 +175,7 @@ const CinematicCamera = ({
   const elapsedRef = useRef(0);
   const [mounted, setMounted] = useState(false);
   const isChia = localStorage.getItem("selectedCharacter") === "Chia";
- 
+
   const steps = rawSteps.map((step) => {
     const audio =
       step.audio === "CHIA_DEPENDENT_4"
@@ -187,13 +187,13 @@ const CinematicCamera = ({
           ? "/sounds/Escena 5 - Aldeana.mp3"
           : "/sounds/Escena 5 - Aldeano.mp3"
         : step.audio;
- 
+
     return {
       ...step,
       audio,
       onStart: () => {
         setSubtitles?.(step.subtitle || "");
-        console.log(step.label);
+
         if (step.label === "Aldeano o Aldeana") {
           setWisePositions?.([
             [-50, 2.2, 8], // sabio 1
@@ -228,31 +228,31 @@ const CinematicCamera = ({
       },
     };
   });
- 
+
   const currentStep = steps[currentStepIndex];
- 
+
   useEffect(() => setMounted(true), []);
- 
+
   useEffect(() => {
     elapsedRef.current = 0;
     currentStep?.onStart?.();
   }, [currentStepIndex]);
- 
+
   useFrame((_, delta) => {
     if (!currentStep) return;
     elapsedRef.current += delta;
     const progress = Math.min(elapsedRef.current / currentStep.duration, 1);
- 
+
     const newPos = new Vector3()
       .copy(currentStep.from.position)
       .lerp(currentStep.to.position, progress);
     camera.position.copy(newPos);
- 
+
     const target = new Vector3()
       .copy(currentStep.from.target)
       .lerp(currentStep.to.target, progress);
     camera.lookAt(target);
- 
+
     if (progress >= 1) {
       currentStep.onComplete?.();
       if (currentStepIndex === steps.length - 1) {
@@ -263,7 +263,7 @@ const CinematicCamera = ({
       }
     }
   });
- 
+
   return (
     <Html style={{ display: "none" }}>
       {mounted && currentStep?.audio && (
@@ -277,6 +277,5 @@ const CinematicCamera = ({
     </Html>
   );
 };
- 
+
 export default CinematicCamera;
- 
