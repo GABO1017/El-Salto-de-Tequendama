@@ -2,7 +2,7 @@ import React from "react";
 import heartFull from "/textures/hearts.svg";
 import heartEmpty from "/textures/shattered-heart.svg";
 import menuIcon from "/textures/pause-button.svg";
-const GameUI = ({ health, onPause, objective, equippedTool, isCinematic, subtitles }) => {
+const GameUI = ({ health, onPause, objective, equippedTool, isCinematic, isEndingActive, subtitles }) => {
   const maxHearts = 5;
   const hearts = Array.from({ length: maxHearts }, (_, i) =>
     i < health / 10 ? heartFull : heartEmpty
@@ -10,7 +10,7 @@ const GameUI = ({ health, onPause, objective, equippedTool, isCinematic, subtitl
  
   return (
     <div className="game-ui">
-      {!isCinematic && (
+      {!isCinematic && !isEndingActive && (
         <>
           <div className="top-left">
             <div className="hearts">

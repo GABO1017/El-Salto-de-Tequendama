@@ -7,7 +7,7 @@ const rawSteps = [
   // Escenas de la cinemática
   {
     label: "Toma aérea de la aldea",
-    duration: 15, //15
+    duration: 1, //15
     from: { position: new Vector3(30, 70, 50), target: new Vector3(0, 0, 0) },
     to: { position: new Vector3(20, 40, 50), target: new Vector3(0, 0, 0) },
     audio: "/sounds/Escena 1.mp3",
@@ -16,7 +16,7 @@ const rawSteps = [
   },
   {
     label: "Cinemática de la tormenta",
-    duration: 15, //15
+    duration: 1, //15
     from: { position: new Vector3(20, 40, 50), target: new Vector3(0, 30, 0) },
     to: {
       position: new Vector3(20, 40, -20),
@@ -28,7 +28,7 @@ const rawSteps = [
   },
   {
     label: "Inundación recorriendo zonas",
-    duration: 18, //18
+    duration: 1, //18
     from: {
       position: new Vector3(20, 150, -175),
       target: new Vector3(25, 0, 15),
@@ -43,7 +43,7 @@ const rawSteps = [
   },
   {
     label: "Sabio Parte 1",
-    duration: 13, //13
+    duration: 1, //13
     from: {
       position: new Vector3(-57, 1.1, 8),
       target: new Vector3(-65, 1.1, 8),
@@ -58,7 +58,7 @@ const rawSteps = [
   },
   {
     label: "Sabio Parte 2",
-    duration: 18, //18
+    duration: 1, //18
     from: {
       position: new Vector3(-57, 1.1, 6),
       target: new Vector3(-65, 1.1, 6),
@@ -73,7 +73,7 @@ const rawSteps = [
   },
   {
     label: "Sabio Parte 3",
-    duration: 11, //11
+    duration: 1, //11
     from: {
       position: new Vector3(-57, 1.1, 10),
       target: new Vector3(-65, 1.1, 10),
@@ -88,7 +88,7 @@ const rawSteps = [
   },
   {
     label: "Aldeano o Aldeana",
-    duration: 9, //9
+    duration: 1, //9
     from: {
       position: new Vector3(-50, 1.1, 8),
       target: new Vector3(-45, 1.1, 8),
@@ -103,7 +103,7 @@ const rawSteps = [
   },
   {
     label: "Sabio 3 Despedida",
-    duration: 8, //8
+    duration: 1, //8
     from: {
       position: new Vector3(-47, 1.1, 10),
       target: new Vector3(-50, 1.1, 10),
@@ -118,7 +118,7 @@ const rawSteps = [
   },
   {
     label: "Sabio 2 Despedida",
-    duration: 11, //11
+    duration: 1, //11
     from: {
       position: new Vector3(-47, 1.1, 6),
       target: new Vector3(-50, 1.1, 6),
@@ -133,7 +133,7 @@ const rawSteps = [
   },
   {
     label: "Despedida Aldeano o Aldeana",
-    duration: 10, //10
+    duration: 1, //10
     from: {
       position: new Vector3(-50, 1.1, 8),
       target: new Vector3(-43, 1.1, 8),
@@ -148,7 +148,7 @@ const rawSteps = [
   },
   {
     label: "Cierre alejándose",
-    duration: 14, //14
+    duration: 1, //14
     from: {
       position: new Vector3(-55, 1.1, 8),
       target: new Vector3(-43, 1.1, 8),

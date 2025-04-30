@@ -21,6 +21,7 @@ const Enemy = forwardRef(
       playerRef,
       isPaused: initialPaused,
       isDead: initialDead,
+      setObjective,
       ...props
     },
     ref
@@ -107,6 +108,16 @@ const Enemy = forwardRef(
                   e
                 );
               }
+            }
+            // 🔥 VERIFICAR SI TODOS LOS ENEMIGOS ESTÁN MUERTOS
+            const allEnemiesDead =
+              typeof window !== "undefined" &&
+              window.enemyRefs &&
+              window.enemyRefs.current &&
+              window.enemyRefs.current.every((ref) => ref?.isInactive());
+
+            if (allEnemiesDead) {
+              setObjective?.("Dirígete a la montaña y encuentra a Bochica");
             }
           }, 3000);
         } else {
@@ -231,6 +242,7 @@ const Enemy = forwardRef(
       setPaused: (paused) => {
         setIsPaused(paused);
       },
+      isInactive: () => isInactive,
     }));
 
     if (isDead) return null;

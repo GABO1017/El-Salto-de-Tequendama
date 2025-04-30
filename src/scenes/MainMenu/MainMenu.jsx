@@ -86,7 +86,6 @@ function MainMenu() {
               <h3 className="subtitle-menus">Una aventura educativa Muisca</h3>
             </div>
             <div className="menus-form">
-              <button className="menus-button" onClick={handleConfig}>Configuración</button>
               <button className="menus-button" onClick={navigateControls}>
                 Controles
               </button>

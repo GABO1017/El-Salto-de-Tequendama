@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, Suspense } from "react";
-import { KeyboardControls, useProgress, useGLTF  } from "@react-three/drei";
+import { KeyboardControls, useProgress, useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
 import { Sky } from "@react-three/drei";
@@ -15,11 +15,13 @@ import Checkpoint from "../../three/Checkpoint";
 import Rain from "../../three/Rain";
 import Water from "../../three/Water";
 import CinematicCamera from "../../three/CinematicCamera";
+import CinematicEnding from "../../three/CinematicEnding";
 import Enemy from "../GameWorld/characters/enemies/Enemy";
 import NormalVillagerM from "../GameWorld/characters/npc/NormalVillagerM";
 import NormalVillagerF from "../GameWorld/characters/npc/NormalVillagerF";
 import WiseVillager1 from "../GameWorld/characters/npc/WiseVillager1";
 import WiseVillager2 from "../GameWorld/characters/npc/WiseVillager2";
+import Bochica from "../GameWorld/characters/npc/Bochica";
 import Tools from "../../components/3D Objects/Tools";
 import { useLocation } from "react-router-dom";
 import {
@@ -42,7 +44,7 @@ const modelPaths = [
 ];
 
 // Precargar modelos fuera del ciclo de renderizado
-modelPaths.forEach(path => {
+modelPaths.forEach((path) => {
   useGLTF.preload(path);
 });
 
@@ -53,9 +55,10 @@ const GameWorld = () => {
   const { progress } = useProgress();
   const [forcedLoading, setForcedLoading] = useState(false);
   // Comprueba si viene de selección de personaje
-// Verificar si viene de selección de personaje
-const isFromSelection = location.state?.fromSelection || 
-localStorage.getItem("isLoadingGame") === "true";
+  // Verificar si viene de selección de personaje
+  const isFromSelection =
+    location.state?.fromSelection ||
+    localStorage.getItem("isLoadingGame") === "true";
   const isCanvasReady = progress === 100;
   const [isCinematicStarted, setIsCinematicStarted] = useState(false);
   const playerRef = useRef();
@@ -64,6 +67,7 @@ localStorage.getItem("isLoadingGame") === "true";
     [180, -3, -115],
     [135, -3, -110],
     [127, -4, -145],
+    [120, -4, -165],
   ];
 
   const villagerMRefs = useRef([]);
@@ -98,7 +102,7 @@ localStorage.getItem("isLoadingGame") === "true";
     [-5, 10, -54],
   ];
 
-  const [playerPosition, setPlayerPosition] = useState([-43, 0.6, 8]); // Posición inicial por defecto
+  const [playerPosition, setPlayerPosition] = useState([259, 47, -248]); // Posición inicial por defecto -43 0.6 8
   const [playerRotation, setPlayerRotation] = useState([0, -90, 0]); // Rotación inicial por defecto
   const [wisePositions, setWisePositions] = useState([
     [-65, 2, 8], // Sabio 1
@@ -133,6 +137,14 @@ localStorage.getItem("isLoadingGame") === "true";
   const [playDamage] = useSound(damageSound, { volume: 0.3 });
 
   const [cinematicActive, setCinematicActive] = useState(true);
+  const [isEndingActive, setEndingActive] = useState(false);
+
+  const [isRaining, setIsRaining] = useState(true);
+  const [skyConfig, setSkyConfig] = useState({
+    turbidity: 10,
+    rayleigh: 1,
+  });
+  const [waterY, setWaterY] = useState(-14.5); // posición inicial
   // Por ejemplo, cuando termine la cinemática se actualiza el estado:
   const handleCinematicFinish = () => {
     setCinematicActive(false);
@@ -161,7 +173,7 @@ localStorage.getItem("isLoadingGame") === "true";
       }
     };
 
-    if (cinematicActive) {
+    if (cinematicActive || isEndingActive === true) {
       window.addEventListener("keydown", blockKeyEvents, true);
     } else {
       window.removeEventListener("keydown", blockKeyEvents, true);
@@ -169,7 +181,7 @@ localStorage.getItem("isLoadingGame") === "true";
 
     // Cleanup para asegurarse que se elimine al desmontar o cambiar el estado
     return () => window.removeEventListener("keydown", blockKeyEvents, true);
-  }, [cinematicActive]);
+  }, [cinematicActive, isEndingActive]);
 
   // 🔹 Estado para manejar alertas
   const [alert, setAlert] = useState({
@@ -380,7 +392,7 @@ localStorage.getItem("isLoadingGame") === "true";
         setForcedLoading(false);
         localStorage.removeItem("isLoadingGame");
       }, 3000); // Asegura tiempo para la carga de modelos
-      
+
       return () => clearTimeout(timer);
     }
   }, [isFromSelection]);
@@ -402,6 +414,7 @@ localStorage.getItem("isLoadingGame") === "true";
           objective={objective}
           equippedTool={equippedTool}
           isCinematic={cinematicActive}
+          isEndingActive={isEndingActive}
           subtitles={subtitles}
         />
       )}
@@ -422,27 +435,29 @@ localStorage.getItem("isLoadingGame") === "true";
       {/* Juego */}
       <KeyboardControls map={keyboardMap}>
         <Canvas
-          style={{ width: "100%", height: "100%" }}
+          style={{ width: "100%", height: "100%", backgroundColor: "#87CEEB" }}
           camera={{ position: [0, 5, 15], fov: 75 }}
           shadows
           gl={{ localClippingEnabled: true }}
         >
           <Suspense fallback={null}>
             <Perf position="bottom-right" />
-            <Sky
-              distance={10000}
-              turbidity={10} // Aumenta la turbidez para dar sensación de nubes
-              rayleigh={1} // Disminuye o ajusta rayleigh para menos claridad en el cielo
-              inclination={0} // Ajusta la inclinación según convenga
-              azimuth={0.25}
-            />
-            {!isPaused && !isDead && (
+            {isRaining && (
+              <Sky
+                {...skyConfig}
+                distance={10000}
+                inclination={0}
+                azimuth={0.25}
+              />
+            )}
+
+            {!isPaused && !isDead && isRaining && (
               <Rain count={10000} areaSize={200} fallSpeed={10} />
             )}
 
-            <Physics paused={isPaused}>
+            <Physics paused={isPaused} debug>
               <Village isPaused={isPaused} position={[10, -120, 0]} scale={5} />
-              <Water position={[0, -14.5, 20]} targetY={-1.2} />
+              <Water position={[0, waterY, 20]} targetY={-1.2} />
               <PlayerController
                 ref={playerRef}
                 isPaused={isPaused}
@@ -462,7 +477,7 @@ localStorage.getItem("isLoadingGame") === "true";
                   position={pos}
                   animation="Idle3"
                   playerRef={playerRef}
-                  isPaused={isPaused} 
+                  isPaused={isPaused}
                   setSubtitles={setSubtitles}
                   setObjective={setObjective}
                 />
@@ -477,7 +492,7 @@ localStorage.getItem("isLoadingGame") === "true";
                   position={pos}
                   animation="Idle1"
                   playerRef={playerRef}
-                  isPaused={isPaused} 
+                  isPaused={isPaused}
                   setSubtitles={setSubtitles}
                   setObjective={setObjective}
                 />
@@ -509,11 +524,19 @@ localStorage.getItem("isLoadingGame") === "true";
                   playerRef={playerRef}
                   isPaused={isPaused} // Pasar el estado de pausa
                   isDead={isDead} // Pasar el estado de muerte
+                  setObjective={setObjective}
                   onPlayerCollide={(other) =>
                     handlePlayerCollision(other, index)
                   }
                 />
               ))}
+
+              <Bochica
+                position={[259, 49, -245]} // Posición de Bochica
+                animation="Idle"
+                setSubtitles={setSubtitles}
+                startCinematicEnding={() => setEndingActive(true)}
+              />
 
               <Checkpoint
                 position={[60, 5, -97]}
@@ -539,6 +562,15 @@ localStorage.getItem("isLoadingGame") === "true";
                 setWisePositions={setWisePositions}
                 setWiseAnimations={setWiseAnimations}
                 setPlayerRotation={setPlayerRotation}
+              />
+            )}
+            {isEndingActive && (
+              <CinematicEnding
+                setSubtitles={setSubtitles}
+                onFinish={() => setEndingActive(false)}
+                setIsRaining={setIsRaining}
+                setWaterY={setWaterY}
+                setSkyConfig={setSkyConfig}
               />
             )}
           </Suspense>

@@ -53,7 +53,7 @@ const PlayerController = forwardRef(
   ) => {
     // Controles y parámetros configurables
     const WALK_SPEED = 3.5;
-    const RUN_SPEED = 7.0;
+    const RUN_SPEED = 17.0;
     const ROTATION_SPEED = degToRad(7);
     const JUMP_FORCE = 7.0;
     
@@ -376,7 +376,7 @@ const PlayerController = forwardRef(
       >
         <group ref={container}>
           {/* Cámara */}
-          <group ref={cameraTarget} position-z={2} />
+          <group ref={cameraTarget} position-z={4} />
           <group ref={cameraPosition} position-y={3} position-z={-3} />
 
           {/* Personaje */}

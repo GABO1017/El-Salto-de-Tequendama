@@ -31,7 +31,7 @@ const CharacterSelection = () => {
         <h1 className="character-selection-text">Selecciona tu personaje</h1>
         <div className="character-cards">
           {/* Card de Sue */}
-          <Card sx={{ width: 250, backgroundColor: "#212121", color: "white" }}>
+          <Card sx={{ width: 200, backgroundColor: "#212121", color: "white" }}>
             <CardActionArea onClick={() => selectCharacter("Sue")}>
               <div style={{ width: "100%", aspectRatio: "3 / 5" }}>
                 <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
@@ -39,8 +39,8 @@ const CharacterSelection = () => {
                   <directionalLight position={[1, 2, 3]} />
                   <PlayerMasc
                     animation="Stading"
-                    scale={0.8}
-                    position={[0, -1.5, 0]}
+                    scale={0.7}
+                    position={[0, -1.2, 0]}
                   />
                 </Canvas>
               </div>
@@ -53,7 +53,7 @@ const CharacterSelection = () => {
           </Card>
 
           {/* Card de Chía */}
-          <Card sx={{ width: 250, backgroundColor: "#212121", color: "white" }}>
+          <Card sx={{ width: 200, backgroundColor: "#212121", color: "white" }}>
             <CardActionArea onClick={() => selectCharacter("Chia")}>
               <div style={{ width: "100%", aspectRatio: "3 / 5" }}>
                 <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
@@ -61,8 +61,8 @@ const CharacterSelection = () => {
                   <directionalLight position={[1, 2, 3]} />
                   <PlayerFem
                     animation="Idel"
-                    scale={0.8}
-                    position={[0, -1.5, 0]}
+                    scale={0.7}
+                    position={[0, -1.2, 0]}
                   />
                 </Canvas>
               </div>
