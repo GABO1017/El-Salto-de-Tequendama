@@ -1,13 +1,11 @@
 import React from "react";
 import "./../../styles/global.css";
-import { useNavigate } from "react-router-dom";
 import wasdImage from "./../../assets/images/wasd.png"; // Imagen que contiene WASD
 import arrowsImage from "./../../assets/images/arrows.png"; // Imagen que contiene las flechas
 import spacebarImage from "./../../assets/images/spacebar.png"; // Imagen de la barra espaciadora
 import shiftImage from "./../../assets/images/shift.png"; // Imagen de la tecla Ctrl
 import leftClickImage from "./../../assets/images/leftClick.png"; // Imagen de click izquierdo del mouse
 import fImage from "./../../assets/images/fImage.png"; // Imagen de la tecla F
-import AmbientMusic from "./AmbientMusic";
 
 const Config = ({ onBack, className }) => {
   return (

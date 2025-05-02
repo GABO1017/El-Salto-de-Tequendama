@@ -209,7 +209,7 @@ body {
   width: 60%;
   height: 100%;
 }
-
+ 
 .controls-container{
   display: flex;
   flex-direction: column;
@@ -266,7 +266,7 @@ body {
   left: 3%;
   color: #FFD700;
   font-size: 1.5rem;
-  width: 20%;
+ 
   text-align: center;
 }
 canvas {
@@ -284,6 +284,7 @@ canvas {
   font-size: 3rem;
   color: #FFD700;
   margin-bottom: 20%;
+  text-align: center;
 }
  
 .game-ui {

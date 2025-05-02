@@ -8,7 +8,6 @@ import {
 import { useKeyboardControls } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
-import { useControls } from "leva";
 import { MathUtils, Vector3 } from "three";
 import { degToRad } from "three/src/math/MathUtils.js";
 import PlayerMasc from "../scenes/GameWorld/characters/PlayerMasc";
@@ -53,7 +52,7 @@ const PlayerController = forwardRef(
   ) => {
     // Controles y parámetros configurables
     const WALK_SPEED = 3.5;
-    const RUN_SPEED = 17.0;
+    const RUN_SPEED = 7.0;
     const ROTATION_SPEED = degToRad(7);
     const JUMP_FORCE = 7.0;
     

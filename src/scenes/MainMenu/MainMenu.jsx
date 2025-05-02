@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import useAuthStore from "../../services/auth";
 import { useNavigate } from "react-router-dom";
-import { loadGameProgress } from "../../services/saveProgress"; // Importar función de carga
+import { loadGameProgress } from "../../services/saveProgress";
 import styles from "./../../styles/Menu.module.css";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";

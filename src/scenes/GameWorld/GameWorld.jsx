@@ -1,4 +1,10 @@
-import React, { useRef, useState, useEffect, Suspense } from "react";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  Suspense,
+  useCallback,
+} from "react";
 import { KeyboardControls, useProgress, useGLTF } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useNavigate } from "react-router-dom";
@@ -7,6 +13,7 @@ import { Physics } from "@react-three/rapier";
 import Village from "../GameWorld/environment/Village";
 import PauseMenu from "../../components/UI/PauseMenu";
 import Dead from "../../components/UI/Dead";
+import Win from "../../components/UI/Win";
 import GameUI from "../../components/UI/GameUI";
 import Loading from "../../components/UI/Loading";
 import AmbientSound from "../../components/UI/AmbientSound";
@@ -102,7 +109,7 @@ const GameWorld = () => {
     [-5, 10, -54],
   ];
 
-  const [playerPosition, setPlayerPosition] = useState([259, 47, -248]); // Posición inicial por defecto -43 0.6 8
+  const [playerPosition, setPlayerPosition] = useState([-43, 0.6, 8]); // Posición inicial por defecto -43 0.6 8
   const [playerRotation, setPlayerRotation] = useState([0, -90, 0]); // Rotación inicial por defecto
   const [wisePositions, setWisePositions] = useState([
     [-65, 2, 8], // Sabio 1
@@ -116,6 +123,7 @@ const GameWorld = () => {
   ]);
   const [health, setHealth] = useState(50);
   const [isDead, setIsDead] = useState(false);
+  const [hasWon, setHasWon] = useState(false);
   const [objective, setObjective] = useState(
     "Habla con los aldeanos para conseguir una pista"
   ); // Objetivo inicial
@@ -138,6 +146,9 @@ const GameWorld = () => {
 
   const [cinematicActive, setCinematicActive] = useState(true);
   const [isEndingActive, setEndingActive] = useState(false);
+
+  const [deadEnemies, setDeadEnemies] = useState(0);
+  const totalEnemies = enemyPositions.length;
 
   const [isRaining, setIsRaining] = useState(true);
   const [skyConfig, setSkyConfig] = useState({
@@ -173,7 +184,7 @@ const GameWorld = () => {
       }
     };
 
-    if (cinematicActive || isEndingActive === true) {
+    if (cinematicActive || isEndingActive || hasWon === true) {
       window.addEventListener("keydown", blockKeyEvents, true);
     } else {
       window.removeEventListener("keydown", blockKeyEvents, true);
@@ -181,7 +192,7 @@ const GameWorld = () => {
 
     // Cleanup para asegurarse que se elimine al desmontar o cambiar el estado
     return () => window.removeEventListener("keydown", blockKeyEvents, true);
-  }, [cinematicActive, isEndingActive]);
+  }, [cinematicActive, isEndingActive, hasWon]);
 
   // 🔹 Estado para manejar alertas
   const [alert, setAlert] = useState({
@@ -397,6 +408,36 @@ const GameWorld = () => {
     }
   }, [isFromSelection]);
 
+  // Verifica el estado de todos los enemigos
+  const checkEnemiesStatus = useCallback(() => {
+    let count = 0;
+    enemyRefs.current.forEach((enemy) => {
+      if (enemy && enemy.isDead && enemy.isDead()) {
+        count++;
+      }
+    });
+
+    // Actualiza el contador solo si es diferente
+    if (count !== deadEnemies) {
+      setDeadEnemies(count);
+    }
+
+    // Actualiza el objetivo si todos los enemigos están muertos
+    if (count === totalEnemies && count > 0) {
+      setObjective("Dirígete a la montaña y encuentra a Bochica");
+    }
+  }, [deadEnemies, totalEnemies]);
+
+  // Revisa el estado de los enemigos periódicamente
+  useEffect(() => {
+    const interval = setInterval(() => {
+      checkEnemiesStatus();
+    }, 1000); // Verifica cada segundo
+
+    return () => clearInterval(interval);
+  }, [checkEnemiesStatus]);
+
+
   const isLoading2 = progress !== 100 || forcedLoading || isLoading;
 
   if (isLoading2) {
@@ -407,7 +448,7 @@ const GameWorld = () => {
     <div style={{ width: "100vw", height: "100vh", position: "relative" }}>
       {/* Interfaz de usuario */}
       <AmbientSound isPaused={isPaused} isDead={isDead} />
-      {!isPaused && !isDead && (
+      {!isPaused && !isDead && !hasWon && (
         <GameUI
           health={health}
           onPause={() => setIsPaused(true)}
@@ -432,6 +473,16 @@ const GameWorld = () => {
         <Dead onContinue={handleContinue} onMainMenu={handleMainMenu} />
       )}
 
+      {hasWon && (
+        <Win
+          onContinue={() => {
+            setHasWon(false);
+            setObjective("Puedes seguir explorando libremente.");
+          }}
+          onMainMenu={handleMainMenu}
+        />
+      )}
+
       {/* Juego */}
       <KeyboardControls map={keyboardMap}>
         <Canvas
@@ -441,7 +492,6 @@ const GameWorld = () => {
           gl={{ localClippingEnabled: true }}
         >
           <Suspense fallback={null}>
-            <Perf position="bottom-right" />
             {isRaining && (
               <Sky
                 {...skyConfig}
@@ -455,7 +505,7 @@ const GameWorld = () => {
               <Rain count={10000} areaSize={200} fallSpeed={10} />
             )}
 
-            <Physics paused={isPaused} debug>
+            <Physics paused={isPaused} >
               <Village isPaused={isPaused} position={[10, -120, 0]} scale={5} />
               <Water position={[0, waterY, 20]} targetY={-1.2} />
               <PlayerController
@@ -522,12 +572,26 @@ const GameWorld = () => {
                   position={pos}
                   animation="Idle"
                   playerRef={playerRef}
-                  isPaused={isPaused} // Pasar el estado de pausa
-                  isDead={isDead} // Pasar el estado de muerte
+                  isPaused={isPaused}
+                  isDead={isDead}
                   setObjective={setObjective}
                   onPlayerCollide={(other) =>
                     handlePlayerCollision(other, index)
                   }
+                  onDeath={() => {
+                    // Usamos una función de callback simple sin setState anidado
+                    const newCount = deadEnemies + 1;
+
+                    // Actualizamos el contador de enemigos muertos
+                    setDeadEnemies(newCount);
+
+                    // Si es el último enemigo, cambiamos el objetivo
+                    if (newCount >= totalEnemies) {
+                      setObjective(
+                        "Dirígete a la montaña y encuentra a Bochica"
+                      );
+                    }
+                  }}
                 />
               ))}
 
@@ -554,7 +618,6 @@ const GameWorld = () => {
               shadow-mapSize-height={1024}
               shadow-camera-far={500}
             />
-            <pointLight position={[0, 100, 0]} intensity={1} castShadow />
             {cinematicActive && (
               <CinematicCamera
                 onFinish={handleCinematicFinish}
@@ -567,7 +630,11 @@ const GameWorld = () => {
             {isEndingActive && (
               <CinematicEnding
                 setSubtitles={setSubtitles}
-                onFinish={() => setEndingActive(false)}
+                onFinish={async () => {
+                  setEndingActive(false);
+                  await handleSaveGame(); // 💾 Guardar progreso al ganar
+                  setHasWon(true); // 🎉 Mostrar pantalla de victoria
+                }}
                 setIsRaining={setIsRaining}
                 setWaterY={setWaterY}
                 setSkyConfig={setSkyConfig}

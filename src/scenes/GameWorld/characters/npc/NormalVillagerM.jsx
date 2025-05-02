@@ -225,6 +225,7 @@ const NormalVillagerM = forwardRef(
     }, [cloned]);
 
     const materials = gltf.materials;
+    
 
     return (
       <group

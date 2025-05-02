@@ -65,16 +65,7 @@ const CinematicEnding = ({
   const isChia = localStorage.getItem("selectedCharacter") === "Chia";
 
   const steps = rawSteps.map((step) => {
-    const audio =
-      step.audio === "CHIA_DEPENDENT_4"
-        ? isChia
-          ? "/sounds/Escena 4 - Aldeana.mp3"
-          : "/sounds/Escena 4 - Aldeano.mp3"
-        : step.audio === "CHIA_DEPENDENT_5"
-        ? isChia
-          ? "/sounds/Escena 5 - Aldeana.mp3"
-          : "/sounds/Escena 5 - Aldeano.mp3"
-        : step.audio;
+    const audio = step.audio;
 
     return {
       ...step,

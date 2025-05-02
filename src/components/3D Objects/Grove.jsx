@@ -1,6 +1,5 @@
-import React, { useRef } from 'react'
+import React from 'react'
 import { useGLTF } from "@react-three/drei";
-import { RigidBody } from "@react-three/rapier";
 
 export function Grove(props) {
   const { nodes, materials } = useGLTF('/models/Grove.glb')

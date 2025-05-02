@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { auth, db } from "../../../firebase.config";
+import { auth} from "../../../firebase.config";
 import { sendPasswordResetEmail } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Swal from "sweetalert2";
