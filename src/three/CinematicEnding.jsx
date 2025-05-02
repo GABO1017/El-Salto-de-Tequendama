@@ -123,6 +123,18 @@ const CinematicEnding = ({
     }
   });
 
+    useEffect(() => {
+      const handleSkip = (e) => {
+        if (e.key === "Escape" || e.key === "Enter") {
+          setSubtitles("");
+          onFinish?.();
+        }
+      };
+    
+      window.addEventListener("keydown", handleSkip);
+      return () => window.removeEventListener("keydown", handleSkip);
+    }, []);
+
   return (
     <Html style={{ display: "none" }}>
       {mounted && currentStep?.audio && (

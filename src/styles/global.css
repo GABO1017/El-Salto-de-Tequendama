@@ -143,6 +143,7 @@ body {
   color: transparent;
   cursor: pointer;
   text-decoration: underline;
+  font-weight: bolder;
 }
  
 .menus-links a {
@@ -153,6 +154,7 @@ body {
   /* Espacio entre el texto y la línea */
   text-decoration: none;
   /* Quita el text-decoration si es necesario */
+  
 }
  
 .menus-links a:hover {

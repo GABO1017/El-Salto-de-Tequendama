@@ -53,7 +53,7 @@ const PlayerController = forwardRef(
     // Controles y parámetros configurables
     const WALK_SPEED = 3.5;
     const RUN_SPEED = 7.0;
-    const ROTATION_SPEED = degToRad(7);
+    const ROTATION_SPEED = degToRad(4);
     const JUMP_FORCE = 7.0;
     
 

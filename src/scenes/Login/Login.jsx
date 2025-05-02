@@ -114,7 +114,7 @@ function Login() {
         />
         <div className="menus-links">
           <a onClick={navigateRegister}>Aun no te has registrado?</a>
-          <a onClick={navigatePassForgot}>Olvide mi contraseña</a>
+          <a onClick={navigatePassForgot}>Olvidé mi contraseña</a>
         </div>
         <button type="submit" className="menus-button">
           Inicia Sesion

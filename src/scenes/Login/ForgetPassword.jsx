@@ -9,6 +9,31 @@ import Loading from "../../components/UI/Loading";
 import AmbientMusic from "../../components/UI/AmbientMusic";
 import "./../../styles/global.css";
 
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  "& .MuiOutlinedInput-root": {
+    width: "100%",
+    background: "rgba(255, 255, 255, 0.1)", // Fondo semitransparente
+    backdropFilter: "blur(5px)", // Efecto borroso
+    color: "white", // Texto de color blanco
+    borderRadius: "8px",
+    "& fieldset": {
+      borderColor: "white", // Borde inicial blanco
+    },
+    "&:hover fieldset": {
+      borderColor: "white", // Borde blanco al hacer hover
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "white", // Borde blanco al estar activo
+    },
+  },
+  "& .MuiInputLabel-root": {
+    color: "white", // Color del label (inicial)
+  },
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "white", // Color del label al estar activo
+  },
+}));
+
 function ForgetPassword() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +47,7 @@ function ForgetPassword() {
       // Enviar email con Firebase Auth (esto envía un enlace, pero podemos usarlo para notificación)
       await sendPasswordResetEmail(auth, email);
 
-      Swal.fire("Link enviado", "Revisa tu correo", "success");
+      Swal.fire("Link enviado", "Si te registraste con este correo, habras recibido el link de verificacion. Revisa tu correo", "success");
       navigate("/", { state: { email } });
     } catch (error) {
       Swal.fire("Error", "No se pudo enviar el link", "error");
@@ -30,31 +55,6 @@ function ForgetPassword() {
       setLoading(false);
     }
   };
-
-  const StyledTextField = styled(TextField)(({ theme }) => ({
-    "& .MuiOutlinedInput-root": {
-      width: "100%",
-      background: "rgba(255, 255, 255, 0.1)", // Fondo semitransparente
-      backdropFilter: "blur(5px)", // Efecto borroso
-      color: "white", // Texto de color blanco
-      borderRadius: "8px",
-      "& fieldset": {
-        borderColor: "white", // Borde inicial blanco
-      },
-      "&:hover fieldset": {
-        borderColor: "white", // Borde blanco al hacer hover
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: "white", // Borde blanco al estar activo
-      },
-    },
-    "& .MuiInputLabel-root": {
-      color: "white", // Color del label (inicial)
-    },
-    "& .MuiInputLabel-root.Mui-focused": {
-      color: "white", // Color del label al estar activo
-    },
-  }));
 
   const navigateLogin = () => {
     navigate("/");

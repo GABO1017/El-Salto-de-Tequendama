@@ -264,6 +264,20 @@ const CinematicCamera = ({
     }
   });
 
+  useEffect(() => {
+    const handleSkip = (e) => {
+      if (e.key === "Escape" || e.key === "Enter") {
+        setSubtitles("");
+        onFinish?.();
+        setPlayerRotation?.([0, 0, 0]);
+      }
+    };
+  
+    window.addEventListener("keydown", handleSkip);
+    return () => window.removeEventListener("keydown", handleSkip);
+  }, []);
+  
+
   return (
     <Html style={{ display: "none" }}>
       {mounted && currentStep?.audio && (
