@@ -7,6 +7,7 @@ import spacebarImage from "./../../assets/images/spacebar.png"; // Imagen de la 
 import shiftImage from "./../../assets/images/shift.png"; // Imagen de la tecla Ctrl
 import leftClickImage from "./../../assets/images/leftClick.png"; // Imagen de click izquierdo del mouse
 import fImage from "./../../assets/images/fImage.png"; // Imagen de la tecla F
+import enterImage from "./../../assets/images/enter.png"; // Imagen de la tecla Enter
 import AmbientMusic from "./AmbientMusic";
 
 function ViewControls() {
@@ -43,12 +44,12 @@ function ViewControls() {
         </div>
 
         <div className="control-item">
-          <img
-            src={fImage}
-            alt="F key"
-            className="control-image"
-          />
+          <img src={fImage} alt="F key" className="control-image" />
           <p>Tecla F: Interactuar</p>
+        </div>
+        <div className="control-item">
+          <img src={enterImage} alt="Enter key" className="control-image" />
+          <p>Tecla Enter: Saltar cinematicas</p>
         </div>
       </div>
 

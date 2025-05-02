@@ -56,6 +56,7 @@ const NormalVillagerF = forwardRef(
       "Estamos recolectando hierbas sagradas.",
       "Algo extraño sucede en las montañas.",
       "Debes tener cuidado con los espíritus del bosque.",
+      "Necesitas encontrar una herramienta para atacar",
       "Busca la sabiduría de los ancestros en los templos.",
       "Dicen que los árboles susurran secretos al anochecer.",
     ];
@@ -114,6 +115,11 @@ const NormalVillagerF = forwardRef(
         setSubtitles?.("");
         hasInteracted.current = false; // Resetear interacción
       }, 4000);
+      if (line === "Necesitas encontrar una herramienta para atacar") {
+        setObjective?.(
+          "Busca una herramienta dentro de las casas para poder defenderte."
+        );
+      }
     };
 
     useEffect(() => {

@@ -6,6 +6,7 @@ import spacebarImage from "./../../assets/images/spacebar.png"; // Imagen de la 
 import shiftImage from "./../../assets/images/shift.png"; // Imagen de la tecla Ctrl
 import leftClickImage from "./../../assets/images/leftClick.png"; // Imagen de click izquierdo del mouse
 import fImage from "./../../assets/images/fImage.png"; // Imagen de la tecla F
+import enterImage from "./../../assets/images/enter.png"; // Imagen de la tecla Enter
 
 const Config = ({ onBack, className }) => {
   return (
@@ -40,10 +41,14 @@ const Config = ({ onBack, className }) => {
           <img src={fImage} alt="F key" className="control-image" />
           <p>Tecla F: Interactuar</p>
         </div>
+        <div className="control-item">
+          <img src={enterImage} alt="Enter key" className="control-image" />
+          <p>Tecla Enter: Saltar cinematicas</p>
+        </div>
       </div>
       <div className="menus-form">
         <button className="menus-button" onClick={onBack}>
-          Regresar 
+          Regresar
         </button>
       </div>
     </div>

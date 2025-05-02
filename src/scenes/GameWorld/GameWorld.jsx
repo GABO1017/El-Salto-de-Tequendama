@@ -125,7 +125,7 @@ const GameWorld = () => {
   const [isDead, setIsDead] = useState(false);
   const [hasWon, setHasWon] = useState(false);
   const [objective, setObjective] = useState(
-    "Habla con los aldeanos para conseguir una pista"
+    "Explora la aldea y habla con los aldeanos para obtener pistas."
   ); // Objetivo inicial
   const [subtitles, setSubtitles] = useState("");
   const [isLoading, setIsLoading] = useState(true); // Estado de carga
@@ -362,7 +362,7 @@ const GameWorld = () => {
         checkpointAlert // Se utiliza la alerta personalizada
       );
 
-      setObjective("Busca a los guardianes del bosque y enfrentate a ellos");
+      setObjective("Busca a los guardianes del bosque y enfréntalos.");
     }
   };
 
@@ -370,7 +370,7 @@ const GameWorld = () => {
   const handleToolPickup = () => {
     playPickup();
     setEquippedTool("/textures/weapon.svg");
-    setObjective("Dirigete al bosque");
+    setObjective("Equípate y dirígete al bosque al norte de la aldea.");
   };
 
   useEffect(() => {
@@ -424,7 +424,7 @@ const GameWorld = () => {
 
     // Actualiza el objetivo si todos los enemigos están muertos
     if (count === totalEnemies && count > 0) {
-      setObjective("Dirígete a la montaña y encuentra a Bochica");
+      setObjective("Ve a la montaña sagrada y encuentra a Bochica.");
     }
   }, [deadEnemies, totalEnemies]);
 
@@ -477,7 +477,7 @@ const GameWorld = () => {
         <Win
           onContinue={() => {
             setHasWon(false);
-            setObjective("Puedes seguir explorando libremente.");
+            setObjective("La amenaza ha pasado. Puedes seguir explorando libremente.");
           }}
           onMainMenu={handleMainMenu}
         />
@@ -606,6 +606,7 @@ const GameWorld = () => {
                 position={[60, 5, -97]}
                 checkpointId="1"
                 onCheckpoint={handleCheckpointReached}
+                equippedTool={equippedTool}
               />
               <Tools position={[-15, 20, -93]} onPickUp={handleToolPickup} />
             </Physics>

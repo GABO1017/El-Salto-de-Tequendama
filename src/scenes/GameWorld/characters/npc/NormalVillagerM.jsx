@@ -54,6 +54,7 @@ const NormalVillagerM = forwardRef(
 
     const dialogueLines = [
       "Las cosechas se van a dañar",
+      "Necesitas encontrar una herramienta para atacar",
       "Ofendimos a Chibchacum",
       "El bosque es muy peligroso, hay guardianes enojados",
       "Necesitas encontrar una herramienta para atacar",
@@ -117,7 +118,7 @@ const NormalVillagerM = forwardRef(
 
       if (line === "Necesitas encontrar una herramienta para atacar") {
         setObjective?.(
-          "Busca alguna herramienta dentro de las casas para poder atacar"
+          "Busca una herramienta dentro de las casas para poder defenderte."
         );
       }
     };

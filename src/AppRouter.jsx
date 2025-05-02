@@ -8,20 +8,49 @@ import MainMenu from "./scenes/MainMenu/MainMenu";
 import ViewControls from "./components/UI/ViewControls";
 import GameWorld from "./scenes/GameWorld/GameWorld";
 import CharacterSelection from "./components/UI/CharacterSelection";
-
+import ProtectedRoute from "./ProtectedRoute";
 
 function AppRouter() {
-
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/registro" element={<Register />} />
         <Route path="/olvide-mi-contrasena" element={<ForgetPassword />} />
-        <Route path="/menu" element={<MainMenu />} />
-        <Route path="/controles" element={<ViewControls />} />
-        <Route path="/juego" element={<GameWorld />} />
-        <Route path="/seleccion-personaje" element={<CharacterSelection />} />
+
+        {/* Rutas protegidas */}
+        <Route
+          path="/menu"
+          element={
+            <ProtectedRoute>
+              <MainMenu />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/controles"
+          element={
+            <ProtectedRoute>
+              <ViewControls />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/juego"
+          element={
+            <ProtectedRoute>
+              <GameWorld />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seleccion-personaje"
+          element={
+            <ProtectedRoute>
+              <CharacterSelection />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
