@@ -34,7 +34,7 @@ const Config = ({ onBack, className }) => {
             alt="Left click"
             className="control-image"
           />
-          <p>Click Izquierdo: Atacar</p>
+          <p>Click Izquierdo: Atacar (si tienes un arma equipada)</p>
         </div>
 
         <div className="control-item">
