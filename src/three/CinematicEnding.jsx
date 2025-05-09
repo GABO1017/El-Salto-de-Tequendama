@@ -6,7 +6,6 @@ import { Html } from "@react-three/drei";
 const rawSteps = [
   // Escenas de la cinemática
   {
-    label: "Toma aérea de la aldea",
     duration: 15, //15
     from: {
       position: new Vector3(265, 47, -245),
@@ -21,7 +20,6 @@ const rawSteps = [
       "Hijo del agua y la tierra, tu coraje ha resonado en los vientos de los antiguos. Chibchacum no busca venganza, sino equilibrio",
   },
   {
-    label: "Cinemática de la tormenta",
     duration: 21, //21
     from: {
       position: new Vector3(259, 47, -236),
@@ -36,7 +34,6 @@ const rawSteps = [
       "Hoy, por tu fe y determinación, liberaré las aguas… pero recuerda: el verdadero cambio no se impone con fuerza, sino que nace del corazón de un pueblo que aprende a respetar la vida que lo rodea.",
   },
   {
-    label: "Cinemática de la tormenta",
     duration: 25, //21
     from: {
       position: new Vector3(259, 60, -249),
@@ -71,18 +68,24 @@ const CinematicEnding = ({
       ...step,
       audio,
       onStart: () => {
-        setSubtitles?.(step.subtitle || "");
+        setSubtitles?.(step.subtitle);
       },
     };
   });
 
   const currentStep = steps[currentStepIndex];
+  useEffect(() => {
+    setMounted(true);
 
-  useEffect(() => setMounted(true), []);
+    // Ejecutar subtítulo del primer paso al montar
+    if (steps.length > 0 && typeof setSubtitles === "function") {
+      setSubtitles(steps[0].subtitle);
+    }
+  }, []);
 
   useEffect(() => {
     elapsedRef.current = 0;
-    currentStep?.onStart?.();
+
     if (currentStepIndex === steps.length - 1) {
       // Desactivar lluvia gradualmente
       setTimeout(() => setIsRaining(false), 10000);
@@ -94,6 +97,9 @@ const CinematicEnding = ({
         setWaterY(y);
         if (y <= -20) clearInterval(interval); // el agua deja de bajar al llegar a -20
       }, 50);
+    }
+    if (currentStepIndex > 0 && typeof setSubtitles === "function") {
+      setSubtitles(steps[currentStepIndex].subtitle);
     }
   }, [currentStepIndex]);
 
@@ -114,26 +120,30 @@ const CinematicEnding = ({
 
     if (progress >= 1) {
       currentStep.onComplete?.();
-      if (currentStepIndex === steps.length - 1) {
-        setSubtitles("");
-        onFinish?.();
+
+      const nextIndex = currentStepIndex + 1;
+
+      if (nextIndex < steps.length) {
+        setCurrentStepIndex(nextIndex);
+        setSubtitles(steps[nextIndex].subtitle); // ← muestra siguiente subtítulo justo al avanzar
       } else {
-        setCurrentStepIndex((prev) => prev + 1);
+        setSubtitles(""); // ← solo se borra al final de todo
+        onFinish?.();
       }
     }
   });
 
-    useEffect(() => {
-      const handleSkip = (e) => {
-        if (e.key === "Escape" || e.key === "Enter") {
-          setSubtitles("");
-          onFinish?.();
-        }
-      };
-    
-      window.addEventListener("keydown", handleSkip);
-      return () => window.removeEventListener("keydown", handleSkip);
-    }, []);
+  useEffect(() => {
+    const handleSkip = (e) => {
+      if (e.key === "Escape" || e.key === "Enter") {
+        setSubtitles("");
+        onFinish?.();
+      }
+    };
+
+    window.addEventListener("keydown", handleSkip);
+    return () => window.removeEventListener("keydown", handleSkip);
+  }, []);
 
   return (
     <Html style={{ display: "none" }}>

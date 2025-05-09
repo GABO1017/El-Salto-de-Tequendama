@@ -20,7 +20,7 @@ const Enemy = forwardRef(
       playerRef,
       isPaused: initialPaused,
       isDead: initialDead,
-      setObjective,
+      updateObjective,
       onDeath,
       ...props
     },
