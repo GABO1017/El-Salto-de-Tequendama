@@ -9,11 +9,12 @@ import { useKeyboardControls } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { CapsuleCollider, RigidBody } from "@react-three/rapier";
 import { MathUtils, Vector3 } from "three";
-import { degToRad } from "three/src/math/MathUtils.js";
 import PlayerMasc from "../scenes/GameWorld/characters/PlayerMasc";
 import PlayerFem from "../scenes/GameWorld/characters/PlayerFem";
 // Importa useSound (asegúrate de instalarlo: npm install use-sound)
 import useSound from "use-sound";
+
+const degToRad = MathUtils.degToRad;
 
 /** Normaliza un ángulo dentro del rango -π a π */
 const normalizeAngle = (angle) => {

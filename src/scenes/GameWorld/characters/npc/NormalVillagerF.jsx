@@ -17,7 +17,7 @@ const NormalVillagerF = forwardRef(
     {
       animation,
       setSubtitles,
-      setObjective,
+      updateObjective,
       playerRef,
       isPaused: initialPaused,
       speed = 2,
@@ -116,7 +116,7 @@ const NormalVillagerF = forwardRef(
         hasInteracted.current = false; // Resetear interacción
       }, 4000);
       if (line === "Necesitas encontrar una herramienta para atacar") {
-        setObjective?.(
+        updateObjective?.(
           "Busca una herramienta dentro de las casas para poder defenderte."
         );
       }

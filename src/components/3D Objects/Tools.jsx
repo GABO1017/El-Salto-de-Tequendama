@@ -24,7 +24,7 @@ export function Tools({ position, onPickUp, ...props }) {
       gravityScale={1.5}
       onCollisionEnter={handleCollision} // Detecta la colisión con el jugador
     >
-    <group {...props} position={position} dispose={null} scale={0.5} rotateY={0}>
+    <group {...props} position={position} dispose={null} scale={0.6} rotateY={90}>
       <mesh
         castShadow
         receiveShadow

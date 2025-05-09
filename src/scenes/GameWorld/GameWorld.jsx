@@ -156,7 +156,17 @@ const GameWorld = () => {
     rayleigh: 1,
   });
   const [waterY, setWaterY] = useState(-14.5); // posición inicial
-  // Por ejemplo, cuando termine la cinemática se actualiza el estado:
+
+  const [playGoalSound] = useSound("/sounds/goal.mp3", { volume: 0.5 });
+
+  const updateObjective = (newObjective) => {
+    setObjective(newObjective);
+    playGoalSound(); // sonido al cambiar de objetivo
+    showAlert(`Nuevo objetivo: ${newObjective}`, "info"); // alerta en pantalla
+  };
+  
+
+  // Cuando termine la cinemática se actualiza el estado:
   const handleCinematicFinish = () => {
     setCinematicActive(false);
   };
@@ -241,6 +251,7 @@ const GameWorld = () => {
           setHealth(progress.health);
           setEquippedTool(progress.equippedTool || null);
           setPlayerRotation([0, 0, 0]);
+          setSubtitles(""); // Limpiar subtítulos al cargar la partida
 
           // Cargar el personaje desde Firestore
           if (progress.character) {
@@ -362,7 +373,7 @@ const GameWorld = () => {
         checkpointAlert // Se utiliza la alerta personalizada
       );
 
-      setObjective("Busca a los guardianes del bosque y enfréntalos.");
+      updateObjective("Busca a los guardianes del bosque y enfréntalos.");
     }
   };
 
@@ -370,7 +381,7 @@ const GameWorld = () => {
   const handleToolPickup = () => {
     playPickup();
     setEquippedTool("/textures/weapon.svg");
-    setObjective("Equípate y dirígete al bosque al norte de la aldea.");
+    updateObjective("Equípate y dirígete al bosque al norte de la aldea.");
   };
 
   useEffect(() => {
@@ -420,11 +431,6 @@ const GameWorld = () => {
     // Actualiza el contador solo si es diferente
     if (count !== deadEnemies) {
       setDeadEnemies(count);
-    }
-
-    // Actualiza el objetivo si todos los enemigos están muertos
-    if (count === totalEnemies && count > 0) {
-      setObjective("Ve a la montaña sagrada y encuentra a Bochica.");
     }
   }, [deadEnemies, totalEnemies]);
 
@@ -477,7 +483,7 @@ const GameWorld = () => {
         <Win
           onContinue={() => {
             setHasWon(false);
-            setObjective("La amenaza ha pasado. Puedes seguir explorando libremente.");
+            updateObjective("La amenaza ha pasado. Puedes seguir explorando libremente.");
           }}
           onMainMenu={handleMainMenu}
         />
@@ -529,7 +535,7 @@ const GameWorld = () => {
                   playerRef={playerRef}
                   isPaused={isPaused}
                   setSubtitles={setSubtitles}
-                  setObjective={setObjective}
+                  updateObjective={updateObjective}
                 />
               ))}
 
@@ -544,7 +550,7 @@ const GameWorld = () => {
                   playerRef={playerRef}
                   isPaused={isPaused}
                   setSubtitles={setSubtitles}
-                  setObjective={setObjective}
+                  updateObjective={updateObjective}
                 />
               ))}
 
@@ -574,7 +580,7 @@ const GameWorld = () => {
                   playerRef={playerRef}
                   isPaused={isPaused}
                   isDead={isDead}
-                  setObjective={setObjective}
+                  updateObjective={updateObjective}
                   onPlayerCollide={(other) =>
                     handlePlayerCollision(other, index)
                   }
@@ -587,7 +593,7 @@ const GameWorld = () => {
 
                     // Si es el último enemigo, cambiamos el objetivo
                     if (newCount >= totalEnemies) {
-                      setObjective(
+                      updateObjective(
                         "Dirígete a la montaña y encuentra a Bochica"
                       );
                     }
