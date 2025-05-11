@@ -498,6 +498,7 @@ const GameWorld = () => {
           gl={{ localClippingEnabled: true }}
         >
           <Suspense fallback={null}>
+            <Perf position="bottom-right" />
             {isRaining && (
               <Sky
                 {...skyConfig}
