@@ -19,15 +19,11 @@ export function Tree1(props) {
     <group {...props} dispose={null}>
       <group position={[0, -0.35, 0]}>
         <mesh
-          castShadow
-          receiveShadow
           geometry={nodes.leaves003.geometry}
           material={materials.TreeMaterial}
         />
         <RigidBody colliders={false} type="fixed">
           <mesh
-            castShadow
-            receiveShadow
             geometry={nodes.leaves003_1.geometry}
             material={materials.WoodMaterial}
           />

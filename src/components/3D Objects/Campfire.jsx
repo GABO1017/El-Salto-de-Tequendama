@@ -8,16 +8,12 @@ export function Campfire(props) {
     <group {...props} dispose={null}>
 
         <mesh
-          castShadow
-          receiveShadow
           geometry={
             nodes.campfire_modelsubtool14_campfire_model6_stone_0.geometry
           }
           material={materials.campfire_model6_stone}
         />
         <mesh
-          castShadow
-          receiveShadow
           geometry={
             nodes.campfire_modelsubtool14_campfire_model6_stone2_0.geometry
           }
@@ -25,8 +21,6 @@ export function Campfire(props) {
         />
           <RigidBody type="fixed" colliders={false} name="campfire" debug>
         <mesh
-          castShadow
-          receiveShadow
           geometry={
             nodes.campfire_modelsubtool14_campfire_model6_wood_0.geometry
           }

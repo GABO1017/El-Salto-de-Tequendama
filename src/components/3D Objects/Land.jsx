@@ -8,8 +8,6 @@ export function Land(props) {
     <group {...props} dispose={null}>
       <RigidBody type="fixed" colliders="trimesh" name="village" debug>
         <mesh
-          castShadow
-          receiveShadow
           geometry={nodes.Land.geometry}
           material={materials.GrassLandMaterial}
         />

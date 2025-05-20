@@ -60,16 +60,12 @@ export function Houses(props) {
     <group {...props} dispose={null}>
       <RigidBody type="fixed" colliders="trimesh" name="houses" debug>
         <mesh
-          castShadow
-          receiveShadow
           geometry={nodes.ClayHouse014.geometry}
           material={materials.ClayMaterial}
         />
       </RigidBody>
       <RigidBody colliders={false} type="fixed">
         <mesh
-          castShadow
-          receiveShadow
           geometry={nodes.ClayHouse014_1.geometry}
           material={materials.WoodMaterial}
         />
@@ -80,14 +76,10 @@ export function Houses(props) {
         ))}
       </RigidBody>
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.ClayHouse014_2.geometry}
         material={materials.StrawMaterial}
       />
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.ClayHouse014_3.geometry}
         material={materials.StrawMaterial}
       />

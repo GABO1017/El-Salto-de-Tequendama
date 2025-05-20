@@ -6,8 +6,6 @@ export function Grove(props) {
   return (
     <group {...props} dispose={null}>
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.Grove.geometry}
         material={materials.GroveMaterial}
       />
