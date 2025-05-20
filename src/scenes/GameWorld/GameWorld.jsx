@@ -38,7 +38,6 @@ import {
 } from "../../services/saveProgress";
 import useAuthStore from "../../services/auth";
 import { Snackbar, Alert } from "@mui/material";
-import { Perf } from "r3f-perf";
 import useSound from "use-sound";
 
 // Precarga de modelos críticos
@@ -498,7 +497,7 @@ const GameWorld = () => {
           gl={{ localClippingEnabled: true }}
         >
           <Suspense fallback={null}>
-            <Perf position="bottom-right" />
+
             {isRaining && (
               <Sky
                 {...skyConfig}
@@ -621,7 +620,6 @@ const GameWorld = () => {
             <directionalLight
               position={[0, 50, 0]}
               intensity={1}
-              castShadow
               shadow-mapSize-width={1024}
               shadow-mapSize-height={1024}
               shadow-camera-far={500}
@@ -633,7 +631,7 @@ const GameWorld = () => {
                 setWisePositions={setWisePositions}
                 setWiseAnimations={setWiseAnimations}
                 setPlayerRotation={setPlayerRotation}
-              />
+              /> 
             )}
             {isEndingActive && (
               <CinematicEnding

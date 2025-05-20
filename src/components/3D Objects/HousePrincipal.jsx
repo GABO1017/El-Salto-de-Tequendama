@@ -17,8 +17,6 @@ export function HousePrincipal(props) {
     <group {...props} dispose={null}>
       <RigidBody type="fixed" colliders="trimesh" name="houses" debug>
         <mesh
-          castShadow
-          receiveShadow
           geometry={nodes.HomeClay001.geometry}
           material={materials.ClayMaterial}
         />
@@ -26,8 +24,6 @@ export function HousePrincipal(props) {
 
       <RigidBody colliders={false} type="fixed">
         <mesh
-          castShadow
-          receiveShadow
           geometry={nodes.HomeClay001_1.geometry}
           material={materials.WoodMaterial}
         />
@@ -39,8 +35,6 @@ export function HousePrincipal(props) {
       </RigidBody>
 
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.HomeClay001_2.geometry}
         material={materials.StrawMaterial}
       />

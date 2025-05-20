@@ -6,14 +6,10 @@ export function ToolsWorld(props) {
   return (
     <group {...props} dispose={null}>
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.ToolThree002.geometry}
         material={materials.Steel}
       />
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.ToolThree002_1.geometry}
         material={materials.Wood}
       />

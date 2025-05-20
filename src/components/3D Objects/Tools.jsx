@@ -26,14 +26,10 @@ export function Tools({ position, onPickUp, ...props }) {
     >
     <group {...props} position={position} dispose={null} scale={0.6} rotateY={90}>
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.ToolOne.geometry}
         material={materials.Steel2}
       />
       <mesh
-        castShadow
-        receiveShadow
         geometry={nodes.StickToolOne.geometry}
         material={materials.rough_wood}
       />
