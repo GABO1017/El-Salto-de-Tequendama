@@ -81,7 +81,7 @@ function ForgetPassword() {
           required
         />
         <div className="menus-links">
-          <a onClick={navigateLogin}>Regresar al inicio de sesion</a>
+          <a className="menus-links-a" onClick={navigateLogin}>Regresar al inicio de sesion</a>
         </div>
         <button type="submit" className="menus-button">
           Enviar link

@@ -145,8 +145,21 @@ body {
   text-decoration: underline;
   font-weight: bolder;
 }
+
+.link-user-guide {
+  display: flex;
+  justify-content: end;
+  margin-top: -0.9rem;
+  background: linear-gradient(45deg, #FFD700, #FFB800, #FFD700);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  cursor: pointer;
+  text-decoration: underline;
+  font-weight: bolder;
+}
  
-.menus-links a {
+.menus-links-a {
   color: inherit;
   border-bottom: 0.8px solid #FFD700;
   /* Puedes ajustar el color y el grosor */
@@ -157,7 +170,7 @@ body {
   
 }
  
-.menus-links a:hover {
+.menus-links-a:hover {
   border-bottom: none;
   /* Quitar el subrayado en el hover */
 }
