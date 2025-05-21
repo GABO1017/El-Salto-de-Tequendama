@@ -118,7 +118,7 @@ function Register() {
           }}
         />
         <div className="menus-links">
-          <a onClick={navigateLogin}>Ya tengo una cuenta</a>
+          <a className="menus-links-a" onClick={navigateLogin}>Ya tengo una cuenta</a>
         </div>
 
         <button type="submit" className="menus-button">
